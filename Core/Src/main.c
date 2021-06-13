@@ -41,6 +41,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+// Constants for stepper gear calculations
 #define STEP_ANGLE				  (18U)
 #define STEP_ANGLE_DIV			  (10U)
 #define PITCH_DIAM				  (312U)
