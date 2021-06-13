@@ -42,9 +42,9 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 #define STEP_ANGLE				  (18U)
-#define STEP_ANGLE_DIV			(10U)
+#define STEP_ANGLE_DIV			  (10U)
 #define PITCH_DIAM				  (312U)
-#define PITCH_DIV				    (10U)
+#define PITCH_DIV				  (10U)
 #define FULL_ANGLE				  (360U)
 /* USER CODE END PD */
 
