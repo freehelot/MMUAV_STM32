@@ -71,7 +71,6 @@ void MX_GPIO_Init(void)
 
 }
 
-/* USER CODE BEGIN 2 */
 
 void tmc_init_gpio(void)
 {
@@ -100,6 +99,5 @@ void tmc_step(uint32_t micros, bool dir)
 	  timer2_wait_usec(micros);
 
 }
-/* USER CODE END 2 */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
