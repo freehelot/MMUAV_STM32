@@ -61,15 +61,15 @@ void Error_Handler(void);
 // Stepper driver defines
 // Chip select GPIO defines
 // X axis motors
-#define CS_1_Pin 			GPIO_PIN_4
-#define CS_1_GPIO_Port 		GPIOC
-#define CS_2_Pin 			GPIO_PIN_5
-#define CS_2_GPIO_Port 		GPIOC
+#define CS_1_Pin            GPIO_PIN_4
+#define CS_1_GPIO_Port      GPIOC
+#define CS_2_Pin            GPIO_PIN_5
+#define CS_2_GPIO_Port      GPIOC
 // Y axis motors
-#define CS_3_Pin 			GPIO_PIN_0
-#define CS_3_GPIO_Port 		GPIOB
-#define CS_4_Pin 			GPIO_PIN_1
-#define CS_4_GPIO_Port 		GPIOB
+#define CS_3_Pin            GPIO_PIN_0
+#define CS_3_GPIO_Port      GPIOB
+#define CS_4_Pin            GPIO_PIN_1
+#define CS_4_GPIO_Port      GPIOB
 
 // SPIO GPIO defines
 /**
@@ -78,22 +78,22 @@ PA5     ------> SPI1_SCK
 PA6     ------> SPI1_MISO
 PA7     ------> SPI1_MOSI
 */
-#define SPI_SCK_PIN 		GPIO_PIN_5
-#define SPI_SCK_GPIO_PORT	GPIOA
-#define SPI_MISO_PIN		GPIO_PIN_6
+#define SPI_SCK_PIN         GPIO_PIN_5
+#define SPI_SCK_GPIO_PORT   GPIOA
+#define SPI_MISO_PIN        GPIO_PIN_6
 #define SPI_MISO_GPIO_PORT  GPIOA
-#define SPI_MOSI_PIN		GPIO_PIN_7
+#define SPI_MOSI_PIN        GPIO_PIN_7
 #define SPI_MOSI_GPIO_PORT  GPIOA
 
 // Step and direction defines for both axes
-#define STEP_X_PIN			GPIO_PIN_8
-#define STEP_X_GPIO_PORT	GPIOA
-#define STEP_Y_PIN			GPIO_PIN_9
-#define STEP_Y_GPIO_PORT	GPIOC
-#define DIR_X_PIN			GPIO_PIN_9
-#define DIR_X_GPIO_PORT		GPIOA
-#define DIR_Y_PIN			GPIO_PIN_8
-#define DIR_Y_GPIO_PORT		GPIOC
+#define STEP_X_PIN          GPIO_PIN_8
+#define STEP_X_GPIO_PORT    GPIOA
+#define STEP_Y_PIN          GPIO_PIN_9
+#define STEP_Y_GPIO_PORT    GPIOC
+#define DIR_X_PIN           GPIO_PIN_9
+#define DIR_X_GPIO_PORT     GPIOA
+#define DIR_Y_PIN           GPIO_PIN_8
+#define DIR_Y_GPIO_PORT     GPIOC
 
 // Enable pin define for stepper driver
 #define EN_PIN              GPIO_PIN_10
@@ -133,7 +133,7 @@ PA7     ------> SPI1_MOSI
 #define DIR_Pin             GPIO_PIN_9
 #define DIR_GPIO_Port       GPIOA
 #define EN_Pin              GPIO_PIN_10
-#define EN_GPIO_Port 		GPIOA
+#define EN_GPIO_Port        GPIOA
 
 /* USER CODE BEGIN Private defines */
 
