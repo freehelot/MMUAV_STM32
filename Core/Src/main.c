@@ -51,7 +51,7 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-#define DELAY_MS 10U
+#define DELAY_MS                  (10U)
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
