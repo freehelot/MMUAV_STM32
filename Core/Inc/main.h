@@ -96,43 +96,43 @@ PA7     ------> SPI1_MOSI
 #define DIR_Y_GPIO_PORT		GPIOC
 
 // Enable pin define for stepper driver
-#define EN_PIN				GPIO_PIN_10
-#define EN_GPIO_PORT		GPIOA
+#define EN_PIN              GPIO_PIN_10
+#define EN_GPIO_PORT        GPIOA
 
 // Define for BJT/mosfet voltage control to drivers
-#define BJT_PIN				GPIO_PIN_13
-#define BJT_GPIO_PORT		GPIOD
+#define BJT_PIN             GPIO_PIN_13
+#define BJT_GPIO_PORT       GPIOD
 
 // Usart2 pin defines
-#define USART2_TX_PIN		GPIO_PIN_2
-#define USART2_TX_GPIO_PORT	GPIOA
-#define USART2_RX_PIN		GPIO_PIN_3
-#define USART2_RX_GPIO_PORT	GPIOA
+#define USART2_TX_PIN       GPIO_PIN_2
+#define USART2_TX_GPIO_PORT GPIOA
+#define USART2_RX_PIN       GPIO_PIN_3
+#define USART2_RX_GPIO_PORT GPIOA
 
 // Define for PCB specific LEDs
-#define LED1_PIN			GPIO_PIN_12
-#define LED1_GPIO_PORT		GPIOD
-#define LED2_PIN			GPIO_PIN_14
-#define LED2_GPIO_PORT		GPIOD
+#define LED1_PIN            GPIO_PIN_12
+#define LED1_GPIO_PORT      GPIOD
+#define LED2_PIN            GPIO_PIN_14
+#define LED2_GPIO_PORT      GPIOD
 
 // Defines for unused components
 // ADC not initialized and unused currently
-#define ADC_PIN				GPIO_PIN_1
-#define ADC_GPIO_PORT		GPIOA
+#define ADC_PIN             GPIO_PIN_1
+#define ADC_GPIO_PORT       GPIOA
 // DAC not initialized and unused currently
-#define DAC_PIN				GPIO_PIN_4
-#define DAC_GPIO_PORT		GPIOA
+#define DAC_PIN             GPIO_PIN_4
+#define DAC_GPIO_PORT       GPIOA
 // Free GPIO pin for further use
-#define IO_PIN				GPIO_PIN_15
-#define IO_GPIO_PORT		GPIOD
+#define IO_PIN              GPIO_PIN_15
+#define IO_GPIO_PORT        GPIOD
 
 
 // unused, replace later
-#define STEP_Pin 			GPIO_PIN_8
-#define STEP_GPIO_Port 		GPIOA
-#define DIR_Pin 			GPIO_PIN_9
-#define DIR_GPIO_Port 		GPIOA
-#define EN_Pin 				GPIO_PIN_10
+#define STEP_Pin            GPIO_PIN_8
+#define STEP_GPIO_Port      GPIOA
+#define DIR_Pin             GPIO_PIN_9
+#define DIR_GPIO_Port       GPIOA
+#define EN_Pin              GPIO_PIN_10
 #define EN_GPIO_Port 		GPIOA
 
 /* USER CODE BEGIN Private defines */
