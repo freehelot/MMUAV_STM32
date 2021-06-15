@@ -22,7 +22,9 @@ extern "C" {
 #include <stdbool.h>
 #include <stdint.h>
 #include "stm32f4xx_hal.h"
+
 /* Public defines -----------------------------------------------------------*/
+
 // Stepper driver defines
 // Chip select GPIO defines
 // X axis motors
@@ -91,13 +93,23 @@ PA7     ------> SPI1_MOSI
 #define IO_PIN              GPIO_PIN_15
 #define IO_GPIO_PORT        GPIOD
 
-// IDE gpio init, to be removed&replaced
-void MX_GPIO_Init(void);
+/*Public function prototypes*****************************/
 
 /**
  * Initialization of all GPIO peripherals
  */
 void bsp_gpio_init(void);
+
+/**
+ * USART2 GPIO pins initialization
+ */
+void bsp_usart2_gpio_init(void);
+
+/**
+ * SPI GPIO pins initialization
+ */
+void bsp_spi_gpio_init(void);
+
 
 
 void tmc_init_gpio(void);

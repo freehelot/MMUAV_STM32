@@ -14,6 +14,7 @@
 #include <bsp_gpio.h>
 
 /* Private function prototypes-------------------------------------------*/
+
 /**
  * Initialization of all stepper driver GPIO pins except
  * SPI related pins
@@ -30,36 +31,37 @@ static void bsp_bjt_gpio_init(void);
  */
 static void bsp_led_gpio_init(void);
 
-/**
- * USART2 GPIO pins initialization
- */
-static void bsp_usart2_gpio_init(void);
-
-/**
- * SPI GPIO pins initialization
- */
-void bsp_spi_gpio_init(void);
-
 /* Public functions-------------------------------------------*/
 
 void bsp_gpio_init(void)
 {
 
-    GPIO_InitTypeDef GPIO_InitStruct = {0};
 
-//  GPIO port clock enable
-    __HAL_RCC_GPIOA_CLK_ENABLE();
-    __HAL_RCC_GPIOB_CLK_ENABLE();
-    __HAL_RCC_GPIOC_CLK_ENABLE();
-    __HAL_RCC_GPIOD_CLK_ENABLE();
+    // GPIO port clock enable
     __HAL_RCC_GPIOH_CLK_ENABLE();
 
-    /*Configure GPIO pin Output Level */
-    // Chip select gpio output level init
-    HAL_GPIO_WritePin(CS_1_GPIO_PORT, CS_1_PIN, GPIO_PIN_RESET);
-    HAL_GPIO_WritePin(CS_2_GPIO_PORT, CS_2_PIN, GPIO_PIN_RESET);
-    HAL_GPIO_WritePin(CS_3_GPIO_PORT, CS_3_PIN, GPIO_PIN_RESET);
-    HAL_GPIO_WritePin(CS_4_GPIO_PORT, CS_4_PIN, GPIO_PIN_RESET);
+    // Initialization calls
+    bsp_stepper_gpio_init();
+    bsp_bjt_gpio_init();
+    bsp_led_gpio_init();
+    //bsp_usart2_gpio_init();
+    //bsp_spi_gpio_init();
+
+}
+
+void bsp_usart2_gpio_init(void)
+{
+
+    GPIO_InitTypeDef GPIO_InitStruct = {0};
+	// Clock enable
+    __HAL_RCC_GPIOA_CLK_ENABLE();
+    // Pin configuration
+    GPIO_InitStruct.Pin = USART2_RX_PIN|USART2_TX_PIN;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    GPIO_InitStruct.Alternate = GPIO_AF7_USART2;
+    HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
 }
 
@@ -138,19 +140,4 @@ static void bsp_led_gpio_init(void)
 
 }
 
-static void bsp_usart2_gpio_init(void)
-{
-
-    GPIO_InitTypeDef GPIO_InitStruct = {0};
-	// Clock enable
-    __HAL_RCC_GPIOA_CLK_ENABLE();
-    // Pin configuration
-    GPIO_InitStruct.Pin = USART2_RX_PIN|USART2_TX_PIN;
-    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-    GPIO_InitStruct.Alternate = GPIO_AF7_USART2;
-    HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
-
-}
 
