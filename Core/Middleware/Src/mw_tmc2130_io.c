@@ -1,11 +1,11 @@
 /*
- * tmc_io.c
+ * mw_tmc_io.c
  *
  *  Created on: 6 Apr 2021
  *      Author: hrvoje
  */
 /* Includes ------------------------------------------------------------------*/
-#include <tmc_io.h>
+#include <mw_tmc2130_io.h>
 /* USER CODE BEGIN 0 */
 #include <bits.h>
 /* Private define ------------------------------------------------------------*/

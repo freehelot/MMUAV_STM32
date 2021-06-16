@@ -97,10 +97,10 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* tim_baseHandle)
 void bsp_tim_wait_usec(uint32_t usec)
 {
 	uint32_t t1, t2;
-	t1 = timer2_get_usec();
+	t1 = bsp_tim_get_usec();
 	for (; ;)
 	{
-		t2 = timer2_get_usec();
+		t2 = bsp_tim_get_usec();
 		if ((t2 - t1) >= usec)
 			break;
 		if (t2 < t1)

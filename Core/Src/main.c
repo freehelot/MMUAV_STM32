@@ -26,8 +26,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "tmc_io.h"
 #include <bits.h>
+#include <mw_tmc2130_io.h>
 #include <register.h>
 #include <stdbool.h>
 
@@ -88,45 +88,24 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
 	timer2_Ticks_usec = 0;
+
+	uint8_t size = 3;
+	uint8_t counter = 0;
+	char command[size];
+	char c;
+	bool check = false;
+	uint32_t movement = 0;
+	bool valid = true;
+	bool direction = true;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
-
-  /* USER CODE BEGIN Init */
-  uint8_t size = 3;
-  uint8_t counter = 0;
-  char command[size];
-  char c;
-  bool check = false;
-  uint32_t movement = 0;
-  bool valid = true;
-  bool direction = true;
-  /* USER CODE END Init */
-
-  /* Configure the system clock */
-
-
-  /* USER CODE BEGIN SysInit */
-
-  /* USER CODE END SysInit */
-
   /* Initialize all configured peripherals */
+  bsp_init();
 
-
-  MX_GPIO_Init();
-  //MX_USART1_UART_Init();
-  MX_TIM2_Init();
-  //MX_NVIC_Init();
-  MX_USART2_UART_Init();
-  HAL_TIM_Base_Start_IT(&htim2);
-  //MX_USART6_UART_Init();
-  MX_SPI1_Init();
-
-  /* Initialize interrupts */
-  //MX_NVIC_Init();
   /* USER CODE BEGIN 2 */
   //HAL_Delay(2000);
   tmc_io_gpio();
