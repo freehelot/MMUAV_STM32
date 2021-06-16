@@ -28,7 +28,7 @@ extern "C" {
 #include "main.h"
 
 /* USER CODE BEGIN Includes */
-#define BUFSIZE 16		//define size of FIFO buffer
+//#define BUFSIZE 16		//define size of FIFO buffer
 /* USER CODE END Includes */
 
 extern UART_HandleTypeDef huart1;

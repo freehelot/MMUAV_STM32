@@ -66,7 +66,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
  *
  * @param huart uart handle
  */
-void USER_UART_IRQHandler( UART_HandleTypeDef *huart)
+void bsp_usart_irq_handler( UART_HandleTypeDef *huart)
 {
 	if(huart->Instance == USART2)
 	{

@@ -23,8 +23,17 @@
 void bsp_init(void)
 {
 	// Inits
+    // Sys clock init
+    bsp_sys_clock_config();
+	// stepper pins, leds, bjt and other GPIO init
 	bsp_gpio_init();
+	// SPI peripheral init
     bsp_spi_init();
+    // USART peripheral init
+    bsp_usart_init();
+    // TIM2 init
+    bsp_tim_init();
+    HAL_TIM_Base_Start_IT(&htim2);
 
 
 

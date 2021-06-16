@@ -44,6 +44,15 @@ extern int  RX_BUFFER_HEAD, RX_BUFFER_TAIL;
 uint8_t rx_data;
 /* Public function prototypes ------------------------------------------------------------------*/
 
+
+/**
+ * @brief User implemented function to call when IRQ handler
+ * is called by usart2
+ *
+ * @param huart USART2
+ */
+void bsp_usart_irq_handler( UART_HandleTypeDef *huart);
+
 /**
  * @brief Initialization of desired USART
  */
