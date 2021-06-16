@@ -45,8 +45,8 @@ PA5     ------> SPI1_SCK
 PA6     ------> SPI1_MISO
 PA7     ------> SPI1_MOSI
 */
-#define SPI_SCK_PIN         GPIO_PIN_5
-#define SPI_SCK_GPIO_PORT   GPIOA
+#define SPI_SCK_PIN         GPIO_PIN_3
+#define SPI_SCK_GPIO_PORT   GPIOB
 #define SPI_MISO_PIN        GPIO_PIN_6
 #define SPI_MISO_GPIO_PORT  GPIOA
 #define SPI_MOSI_PIN        GPIO_PIN_7
