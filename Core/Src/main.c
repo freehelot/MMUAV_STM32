@@ -61,7 +61,7 @@ uint8_t drv[5] = {0};
 uint8_t crv[5];
 uint8_t vrv[5];
 uint32_t timer2_Ticks_usec;
-
+uint32_t timer2_ticks_usec;
 //usart related PV
 char RX_BUFFER[BUFSIZE];
 int RX_BUFFER_HEAD, RX_BUFFER_TAIL;
