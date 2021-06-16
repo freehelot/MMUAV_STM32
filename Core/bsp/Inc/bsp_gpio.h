@@ -96,17 +96,20 @@ PA7     ------> SPI1_MOSI
 /*Public function prototypes*****************************/
 
 /**
- * Initialization of all GPIO peripherals
+ * @brief Initialization of all GPIO peripherals
+ *
  */
 void bsp_gpio_init(void);
 
 /**
- * USART2 GPIO pins initialization
+ * @brief USART2 GPIO pins initialization
+ *
  */
 void bsp_usart2_gpio_init(void);
 
 /**
- * SPI GPIO pins initialization
+ * @brief SPI GPIO pins initialization
+ *
  */
 void bsp_spi_gpio_init(void);
 

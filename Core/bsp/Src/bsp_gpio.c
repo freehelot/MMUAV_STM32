@@ -16,18 +16,21 @@
 /* Private function prototypes-------------------------------------------*/
 
 /**
- * Initialization of all stepper driver GPIO pins except
+ * @brief Initialization of all stepper driver GPIO pins except
  * SPI related pins
+ *
  */
 static void bsp_stepper_gpio_init(void);
 
 /**
- *  Initialization of bjt mosfet control pin
+ * @brief Initialization of bjt mosfet control pin
+ *
  */
 static void bsp_bjt_gpio_init(void);
 
 /**
- *  Initialization of LED1 and LED2 on PCB
+ * @brief Initialization of LED1 and LED2 on PCB
+ *
  */
 static void bsp_led_gpio_init(void);
 
@@ -40,7 +43,7 @@ void bsp_gpio_init(void)
     // GPIO port clock enable
     __HAL_RCC_GPIOH_CLK_ENABLE();
 
-    // Initialization calls
+    // Initialization calls for GPIO peripherals
     bsp_stepper_gpio_init();
     bsp_bjt_gpio_init();
     bsp_led_gpio_init();
@@ -65,6 +68,23 @@ void bsp_usart2_gpio_init(void)
 
 }
 
+void bsp_spi_gpio_init(void)
+{
+    GPIO_InitTypeDef GPIO_InitStruct = {0};
+	// Clock enable
+    __HAL_RCC_GPIOA_CLK_ENABLE();
+    /**SPI1 GPIO Configuration
+    PA5     ------> SPI1_SCK
+    PA6     ------> SPI1_MISO
+    PA7     ------> SPI1_MOSI
+    */
+    GPIO_InitStruct.Pin = SPI_SCK_PIN|SPI_MISO_PIN|SPI_MOSI_PIN;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    GPIO_InitStruct.Alternate = GPIO_AF5_SPI1;
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+}
 /* Private functions-------------------------------------------*/
 
 static void bsp_stepper_gpio_init(void)

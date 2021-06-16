@@ -19,13 +19,15 @@ extern "C" {
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
 
+#include <bsp_gpio.h>
 
 // Public and external data types
 extern SPI_HandleTypeDef hspi1;
 
 // Public function prototypes
 /**
- * Initializes SPI peripheral
+ * @brief Initializes SPI peripheral
+ *
  */
 void bsp_spi_init(void);
 

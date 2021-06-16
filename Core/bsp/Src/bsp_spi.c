@@ -40,4 +40,26 @@ void bsp_spi_init(void)
 
 }
 
+/**
+ * @brief Low level implementation of SPI and SPI gpio init
+ * needed as callback function implemented in HAL
+ *
+ * @param spiHandle
+ */
+void HAL_SPI_MspInit(SPI_HandleTypeDef* spiHandle)
+{
+
+  if(spiHandle->Instance==SPI_INSTANCE)
+  {
+  /* USER CODE BEGIN SPI1_MspInit 0 */
+
+  /* USER CODE END SPI1_MspInit 0 */
+    /* SPI1 clock enable */
+    __HAL_RCC_SPI1_CLK_ENABLE();
+    // GPIO enable and init for SPI periph.
+    bsp_spi_gpio_init();
+  }
+
+}
+
 

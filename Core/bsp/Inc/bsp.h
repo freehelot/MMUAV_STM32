@@ -21,9 +21,18 @@ extern "C" {
 #include <stdbool.h>
 
 #include <bsp_gpio.h>
+#include <bsp_usart.h>
+#include <bsp_spi.h>
 
 
 
+
+/* Private function prototypes ------------------------------------------------------------------*/
+
+/**
+ * Initializes all BSP
+ */
+void bsp_init(void);
 
 #ifdef __cplusplus
 }

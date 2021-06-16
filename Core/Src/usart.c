@@ -116,7 +116,7 @@ void MX_USART6_UART_Init(void)
 
 }
 
-void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
+void unused_HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
 {
 
   GPIO_InitTypeDef GPIO_InitStruct = {0};
@@ -212,7 +212,7 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
 }
 
 /* USER CODE BEGIN 1 */
-void USER_UART_IRQHandler( UART_HandleTypeDef *huart)
+void UNUSED_USER_UART_IRQHandler( UART_HandleTypeDef *huart)
 {
 	if(huart->Instance == USART2)
 	{
