@@ -13,6 +13,9 @@
 /* Includes ------------------------------------------------------------------*/
 #include <bsp_gpio.h>
 
+
+#define X_AXIS   (1U)
+#define Y_AXIS   (2U)
 /* Private function prototypes-------------------------------------------*/
 
 /**
@@ -144,6 +147,39 @@ void bsp_gpio_tmc2130_enable(void)
 	HAL_GPIO_WritePin(EN_GPIO_PORT, EN_PIN, GPIO_PIN_RESET);
 }
 
+void bsp_gpio_step_axis_on(uint8_t axis)
+{
+	switch(axis)
+	{
+	   case X_AXIS:
+		   HAL_GPIO_WritePin(STEP_X_GPIO_PORT, STEP_X_PIN, GPIO_PIN_SET);
+	   break;
+	   case Y_AXIS:
+		   HAL_GPIO_WritePin(STEP_Y_GPIO_PORT, STEP_Y_PIN, GPIO_PIN_SET);
+	   break;
+	   default:
+	   	   // Wrong axis input
+	   break;
+	}
+
+}
+
+void bsp_gpio_step_axis_off(uint8_t axis)
+{
+	switch(axis)
+	{
+	   case X_AXIS:
+		   HAL_GPIO_WritePin(STEP_X_GPIO_PORT, STEP_X_PIN, GPIO_PIN_RESET);
+	   break;
+	   case Y_AXIS:
+		   HAL_GPIO_WritePin(STEP_Y_GPIO_PORT, STEP_Y_PIN, GPIO_PIN_RESET);
+	   break;
+	   default:
+	   	   // Wrong axis input
+	   break;
+	}
+
+}
 /* Private functions-------------------------------------------*/
 
 static void bsp_stepper_gpio_init(void)

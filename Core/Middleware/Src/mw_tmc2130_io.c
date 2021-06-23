@@ -160,7 +160,9 @@ void mw_tmc2130_io_config_all(uint8_t mode)
 	bsp_gpio_tmc2130_enable();
 }
 
-/* Private user code ---------------------------------------------------------*/
+
+
+/*  ---------------------------------------------------------*/
 
 void tmc_io_write( uint8_t cmd,uint32_t data)
 {
@@ -280,6 +282,15 @@ void tmc_io_gpio(void)
 }
 
 
+void mw_tmc2130_io_step(uint8_t axis, uint32_t usec)
+{
+	bsp_gpio_step_axis_on(axis);
+	bsp_tim_wait_usec(usec);
+	bsp_gpio_step_axis_off(axis);
+	bsp_tim_wait_usec(usec);
+
+}
+
 void tmc_io_step_millis(uint32_t millis)
 {
 	/*
@@ -300,6 +311,11 @@ void tmc_io_step(uint32_t usec)
       timer2_wait_usec(usec);
       */
 }
+
+
+////////////////////////////////////////////////////////////////
+/// Currently unused functions for specific stepper driver calibration
+
 
 uint32_t set_chopconf(uint8_t toff, uint8_t hstrt, uint8_t hend, uint8_t tbl, uint8_t vsense, uint8_t sync, uint8_t mres)
 {
@@ -447,6 +463,9 @@ spi_status_t get_spi_status(uint8_t cmd)
 	return status;
 }
 
+
+///////////////////////////////////////////////////////////////////////////////
+// Functions for ramping, but unused and unnecessary
 void accelerate(uint32_t start, uint32_t end)
 {
 	for(uint32_t i = start; i > end; (i=i-20))
@@ -479,5 +498,4 @@ void ramp_stepper(uint32_t max_speed, uint32_t repeat)
 	decelerate(max_speed, 200);
 	HAL_GPIO_WritePin(EN_GPIO_PORT, EN_PIN, GPIO_PIN_SET);
 }
-/* USER CODE END 1 */
-
+/* CODE END*/

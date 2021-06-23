@@ -18,7 +18,7 @@
 //#include <spi.h>
 #include <bsp_gpio.h>
 #include <bsp_spi.h>
-
+#include <bsp_tim.h>
 
 
 // TMC specific includes
@@ -124,6 +124,17 @@ void mw_tmc2130_io_init(void);
  * @param mode Mode selection for microstep setting
  */
 void mw_tmc2130_io_config_all(uint8_t mode);
+
+
+/**
+ * @brief Function for doing step on axis in usecs
+ *
+ * @param axis Desired axis of movement
+ * @param usec Step time in microseconds
+ */
+void mw_tmc2130_io_step(uint8_t axis, uint32_t usec);
+
+
 
 
 
