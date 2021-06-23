@@ -53,6 +53,8 @@ extern "C" {
 // Stepper driver defines
 // Chip select GPIO defines
 // X axis motors
+
+
 #define CS_1_Pin            GPIO_PIN_4
 #define CS_1_GPIO_Port      GPIOC
 #define CS_2_Pin            GPIO_PIN_5

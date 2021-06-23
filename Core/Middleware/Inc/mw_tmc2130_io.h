@@ -9,17 +9,29 @@
 #define INC_TMC_IO_H_
 
 /* USER CODE BEGIN Includes */
+// Library includes
 #include <stdint.h>
-#include "register.h"
-#include <gpio.h>
-#include <spi.h>
+#include <stdbool.h>
+// BSP includes
+//#include <gpio.h>
+//#include <tim.h>
+//#include <spi.h>
+#include <bsp_gpio.h>
+#include <bsp_spi.h>
+
+
+
+// TMC specific includes
 #include <TMC2130/TMC2130_Mask_Shift.h>
 #include <bits.h>
-#include <tim.h>
-#include <stdbool.h>
+#include "register.h"
+
+
 /* USER CODE END Includes */
 
 /* USER CODE BEGIN Private defines */
+
+/*
 #define CS_1_Pin GPIO_PIN_4
 #define CS_1_GPIO_Port GPIOC
 #define STEP_Pin GPIO_PIN_8
@@ -28,7 +40,7 @@
 #define DIR_GPIO_Port GPIOA
 #define EN_Pin GPIO_PIN_10
 #define EN_GPIO_Port GPIOA
-
+*/
 // enum for drv status flags
 typedef enum
 {
@@ -63,12 +75,67 @@ extern SPI_HandleTypeDef hspi1;
 
 
 /**
+ * @brief Middleware that uses SPI for writing to stepper driver
+ * Should probably be static -> TODO: implement that
+ *
+ * @param cs Chip select
+ * @param cmd Command for R/W + register where to R/W
+ * @param data Data to be sent to register
+ */
+void mw_tmc2130_io_write(uint8_t cs, uint8_t cmd, uint32_t data);
+
+
+/**
+ * @brief Middleware that uses SPI for writing to all stepper driver
+ *
+ * @param cmd Command for R/W + register where to R/W
+ * @param data Data to be sent to register
+ */
+void mw_tmc2130_io_write_all(uint8_t cmd, uint32_t data);
+
+
+
+
+/**
+ * @brief Middleware that uses SPI for writing to selected axis stepper drivers
+ *
+ * @param axis desired duo of stepper drivers
+ * @param cmd Command for R/W + register where to R/W
+ * @param data Data to be sent to register
+ */
+
+void mw_tmc2130_io_write_axis(uint8_t axis, uint8_t cmd, uint32_t data);
+
+
+
+
+
+
+/**
+ * @brief Initializes all stepper drivers
+ *
+ */
+void mw_tmc2130_io_init(void);
+
+
+/**
+ * @brief Setting microsteps depending on mode chosen
+ * Initial function for testing chopconf
+ * @param mode Mode selection for microstep setting
+ */
+void mw_tmc2130_io_config_all(uint8_t mode);
+
+
+
+////////////////////////////////////////////
+/**
  * Simple function to write to TMC2130 via SPI.
  *
  * @param cmd Register address
  * @param data Data to be written to register
  */
 void tmc_io_write( uint8_t cmd,uint32_t data);
+
 
 /**
  * Set all data to 0 in registers. Must do during reset.

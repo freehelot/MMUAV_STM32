@@ -114,6 +114,32 @@ void bsp_usart2_gpio_init(void);
 void bsp_spi_gpio_init(void);
 
 
+/**
+ * @brief Toggles Chip select for specific driver
+ *
+ * @param cs Chip select
+ */
+void bsp_gpio_chipselect(uint8_t cs);
+
+/**
+ * @brief Reset all CS pins to 0 (negative active, so set all to high)
+ *
+ */
+void bsp_gpio_chipselect_reset(void);
+
+/**
+ * @brief Turns on all of CS pins (negative active, so all are low)
+ *
+ */
+void bsp_gpio_chipselect_all(void);
+
+/**
+ * @brief Enable stepper drivers
+ *
+ */
+void bsp_gpio_tmc2130_enable(void);
+
+
 
 void tmc_init_gpio(void);
 void tmc_step(uint32_t micros, bool dir);

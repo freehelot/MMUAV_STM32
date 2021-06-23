@@ -32,6 +32,14 @@ extern SPI_HandleTypeDef hspi1;
 void bsp_spi_init(void);
 
 
+/**
+ * Simple function to write to TMC2130 via SPI.
+ *
+ * @param cmd Register address
+ * @param data Data to be written to register
+ */
+void bsp_spi_tmc2130_send(uint8_t cmd,uint32_t data);
+
 
 
 #ifdef __cplusplus

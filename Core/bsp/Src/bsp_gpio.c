@@ -34,6 +34,8 @@ static void bsp_bjt_gpio_init(void);
  */
 static void bsp_led_gpio_init(void);
 
+
+
 /* Public functions-------------------------------------------*/
 
 void bsp_gpio_init(void)
@@ -92,6 +94,56 @@ void bsp_spi_gpio_init(void)
     GPIO_InitStruct.Alternate = GPIO_AF5_SPI1;
     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 }
+
+
+void bsp_gpio_chipselect_reset(void)
+{
+    HAL_GPIO_WritePin(CS_1_GPIO_PORT, CS_1_PIN, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(CS_2_GPIO_PORT, CS_2_PIN, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(CS_3_GPIO_PORT, CS_3_PIN, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(CS_4_GPIO_PORT, CS_4_PIN, GPIO_PIN_SET);
+}
+
+void bsp_gpio_chipselect(uint8_t cs)
+{
+
+	switch (cs)
+		{
+		    case 1:
+			    HAL_GPIO_WritePin(CS_1_GPIO_PORT,CS_1_PIN,GPIO_PIN_RESET);
+		    break;
+		    case 2:
+			    HAL_GPIO_WritePin(CS_2_GPIO_PORT,CS_2_PIN,GPIO_PIN_RESET);
+		    break;
+		    case 3:
+			    HAL_GPIO_WritePin(CS_3_GPIO_PORT,CS_3_PIN,GPIO_PIN_RESET);
+		    break;
+		    case 4:
+			    HAL_GPIO_WritePin(CS_4_GPIO_PORT,CS_4_PIN,GPIO_PIN_RESET);
+		    break;
+		    default:
+		    	// wrong CS selected -> no CS selected available
+		    break;
+
+
+		}
+
+}
+
+void bsp_gpio_chipselect_all(void)
+{
+    HAL_GPIO_WritePin(CS_1_GPIO_PORT, CS_1_PIN, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(CS_2_GPIO_PORT, CS_2_PIN, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(CS_3_GPIO_PORT, CS_3_PIN, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(CS_4_GPIO_PORT, CS_4_PIN, GPIO_PIN_RESET);
+}
+
+void bsp_gpio_tmc2130_enable(void)
+{
+	//low EN for enabling of driver
+	HAL_GPIO_WritePin(EN_GPIO_PORT, EN_PIN, GPIO_PIN_RESET);
+}
+
 /* Private functions-------------------------------------------*/
 
 static void bsp_stepper_gpio_init(void)
@@ -108,7 +160,8 @@ static void bsp_stepper_gpio_init(void)
     HAL_GPIO_WritePin(CS_3_GPIO_PORT, CS_3_PIN, GPIO_PIN_RESET);
     HAL_GPIO_WritePin(CS_4_GPIO_PORT, CS_4_PIN, GPIO_PIN_RESET);
     // Dir, step and enable gpio output level init
-    HAL_GPIO_WritePin(GPIOA, STEP_X_PIN|DIR_X_PIN|EN_PIN, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(GPIOA, STEP_X_PIN|DIR_X_PIN, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(EN_GPIO_PORT, EN_PIN, GPIO_PIN_SET);
     HAL_GPIO_WritePin(GPIOC, STEP_Y_PIN|DIR_Y_PIN, GPIO_PIN_RESET);
 
     // Configuration of Pins
@@ -130,6 +183,15 @@ static void bsp_stepper_gpio_init(void)
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+    // After init turn off all CS ports
+    // Negative active for CS
+    HAL_GPIO_WritePin(CS_1_GPIO_PORT, CS_1_PIN, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(CS_2_GPIO_PORT, CS_2_PIN, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(CS_3_GPIO_PORT, CS_3_PIN, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(CS_4_GPIO_PORT, CS_4_PIN, GPIO_PIN_SET);
+    // EN high -> inactive, drivers turned off
+    HAL_GPIO_WritePin(EN_GPIO_PORT, EN_PIN, GPIO_PIN_SET);
 
 }
 

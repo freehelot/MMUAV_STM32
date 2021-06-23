@@ -6,18 +6,30 @@
  */
 /* Includes ------------------------------------------------------------------*/
 #include <mw_tmc2130_io.h>
-/* USER CODE BEGIN 0 */
-#include <bits.h>
+
 /* Private define ------------------------------------------------------------*/
-/* USER CODE BEGIN PD */
+
 #define TMC_INIT_DATA (0x00000000)
 #define PWM_INIT_DATA (0x00050480)
-/* USER CODE END PD */
+
+// unused
 //#define INIT_REGISTER(REG) REG##_t REG##_register = REG##_t
 
+// Step limits
+#define MAX_STEP (2000U)
+#define MIN_STEP (100U)
 
+//CS1 and CS2 are X axes motors
+#define X_MOT_1  (1U)
+#define X_MOT_2  (2U)
+#define X_AXIS   (1U)
+//CS3 and CS4 are X axes motors
+#define Y_MOT_1  (3U)
+#define Y_MOT_2  (4U)
+#define Y_AXIS   (2U)
 /* Private typedef -----------------------------------------------------------*/
-/* USER CODE BEGIN PTD */
+
+// Microstepping mode
 typedef enum
 {
 	mode_0 =0, //256U
@@ -32,21 +44,127 @@ typedef enum
 	mode_default = mode_0
 }chop_mode_t;
 
-#define MAX_STEP 2000
-#define MIN_STEP 100
-/* USER CODE END PTD */
+/* Private user code ---------------------------------------------------------*/
+
+SPI_HandleTypeDef hspi1;
+
+
+// Reworked functions to remove all instances of hal_gpio or hal_spi calls and instead call bsp functions
+// Which are designed to handles such calls to hal_gpio/spi
+
+void mw_tmc2130_io_write(uint8_t cs, uint8_t cmd, uint32_t data)
+{
+	// Variable, 5x8bits=40bits for communication via SPI
+	bsp_gpio_chipselect(cs);
+	bsp_spi_tmc2130_send(cmd, data);
+	bsp_gpio_chipselect_reset();
+
+}
+
+void mw_tmc2130_io_write_all(uint8_t cmd, uint32_t data){
+	bsp_gpio_chipselect_all();
+	bsp_spi_tmc2130_send(cmd, data);
+	bsp_gpio_chipselect_reset();
+}
+
+
+void mw_tmc2130_io_write_axis(uint8_t axis, uint8_t cmd, uint32_t data)
+{
+	switch(axis)
+	{
+	    case X_AXIS:
+	    	bsp_gpio_chipselect(X_MOT_1);
+	    	bsp_gpio_chipselect(X_MOT_2);
+	    break;
+	    case Y_AXIS:
+	    	bsp_gpio_chipselect(Y_MOT_1);
+	    	bsp_gpio_chipselect(Y_MOT_2);
+	    break;
+	    default:
+	    	// Wrong input, do nothing or call error handler
+	    break;
+	}
+	bsp_spi_tmc2130_send(cmd, data);
+	bsp_gpio_chipselect_reset();
+
+}
+
+void mw_tmc2130_io_init(void)
+{
+	HAL_Delay(200);
+	mw_tmc2130_io_write_all(REG_GCONF|TMC2130_WRITE, TMC_INIT_DATA);
+	mw_tmc2130_io_write_all(REG_GCONF|TMC2130_WRITE, TMC_INIT_DATA);
+	mw_tmc2130_io_write_all(REG_CHOPCONF|TMC2130_WRITE, TMC_INIT_DATA);
+	mw_tmc2130_io_write_all(REG_CHOPCONF|TMC2130_WRITE, TMC_INIT_DATA);
+	mw_tmc2130_io_write_all(REG_COOLCONF|TMC2130_WRITE, TMC_INIT_DATA);
+	mw_tmc2130_io_write_all(REG_IHOLD_IRUN|TMC2130_WRITE, TMC_INIT_DATA);
+}
+
+void mw_tmc2130_io_config_all(uint8_t mode)
+{
+	// 32bit data for storing data for registers
+	uint32_t data;
+	switch(mode)
+	{
+		case mode_0:
+			//native 256 microsteps, MRES=0, TBL=1=24, TOFF=8
+			data=0x00008008UL;
+		break;
+		case mode_1:
+			//128 microsteps, MRES=0, TBL=1=24, TOFF=8
+			data=0x02008008UL;
+		break;
+		case mode_2:
+			// 64 microsteps, MRES=0, TBL=1=24, TOFF=8
+			data=0x03008008UL;
+		break;
+		case mode_3:
+			// 32 microsteps, MRES=0, TBL=1=24, TOFF=8
+			data=0x04008008UL;
+		break;
+		case mode_4:
+			// 16 microsteps, MRES=0, TBL=1=24, TOFF=8
+			data=0x05008008UL;
+		break;
+		case mode_5:
+			//  8 microsteps, MRES=0, TBL=1=24, TOFF=8
+			data=0x06008008UL;
+		break;
+		case mode_6:
+			//  4 microsteps, MRES=0, TBL=1=24, TOFF=8
+			data=0x07008008UL;
+		break;
+		case mode_7:
+			//  2 microsteps, MRES=0, TBL=1=24, TOFF=8
+			data=0x08008008UL;
+		break;
+		case mode_8:
+			//  1 microsteps, MRES=0, TBL=1=24, TOFF=8
+			data=0x00008008UL;
+		break;
+		default:
+			//native 256 microsteps, MRES=0, TBL=1=24, TOFF=8
+			data = 0x00008008UL;
+		break;
+	}
+
+
+	// Voltage on AIN is current reference
+	mw_tmc2130_io_write_all(TMC2130_WRITE|REG_GCONF, 0x00000001UL);
+	// IHOLD=0x10, IRUN=0x10
+	//tmc_io_write(TMC2130_WRITE|REG_IHOLD_IRUN, 0x00001010UL);
+	mw_tmc2130_io_write_all(TMC2130_WRITE|REG_IHOLD_IRUN,0x00001C12UL);
+	//write mode of operation to chopconf register
+	mw_tmc2130_io_write_all(TMC2130_WRITE|REG_CHOPCONF, data);
+	//low EN for enabling of driver
+	bsp_gpio_tmc2130_enable();
+}
 
 /* Private user code ---------------------------------------------------------*/
-/* USER CODE BEGIN 0 */
-SPI_HandleTypeDef hspi1;
-/* USER CODE END 0 */
-
-/* USER CODE BEGIN 1 */
-
 
 void tmc_io_write( uint8_t cmd,uint32_t data)
 {
-
+/*
 		// Variable, 5x8bits=40bits for communication via SPI
 		uint8_t spi[5]={0};
 		//CS pin low before sending
@@ -60,15 +178,16 @@ void tmc_io_write( uint8_t cmd,uint32_t data)
 		spi[4]=((data>>0)&0xFF);
 		//Transmit via SPI
 		HAL_SPI_Transmit(&hspi1,spi,5,50);
-		//CS pin high after sending
+		//CS pin high after sending - CS reset
 		HAL_GPIO_WritePin(CS_1_GPIO_Port,CS_1_Pin,GPIO_PIN_SET);
 
-
+*/
 
 }
 
 void tmc_io_init(void)
 {
+	/*
 	HAL_Delay(200);
 	tmc_io_write(REG_GCONF|TMC2130_WRITE, TMC_INIT_DATA);
 	tmc_io_write(REG_GCONF|TMC2130_WRITE, TMC_INIT_DATA);
@@ -76,11 +195,12 @@ void tmc_io_init(void)
 	tmc_io_write(REG_CHOPCONF|TMC2130_WRITE, TMC_INIT_DATA);
 	tmc_io_write(REG_COOLCONF|TMC2130_WRITE, TMC_INIT_DATA);
 	tmc_io_write(REG_IHOLD_IRUN|TMC2130_WRITE, TMC_INIT_DATA);
-
+*/
 }
 
 void tmc_io_config(uint8_t mode)
 {
+	/*
 	// 32bit data for storing data for registers
 	uint32_t data;
 	switch(mode)
@@ -135,6 +255,7 @@ void tmc_io_config(uint8_t mode)
 	tmc_io_write(TMC2130_WRITE|REG_CHOPCONF, data);
 	//low EN for enabling of driver
 	HAL_GPIO_WritePin(EN_GPIO_Port, EN_Pin, GPIO_PIN_RESET);
+	*/
 }
 
 void tmc_io_status(void)
@@ -150,28 +271,34 @@ void tmc_io_status(void)
 
 void tmc_io_gpio(void)
 {
+	/*
 	  HAL_GPIO_WritePin(CS_1_GPIO_Port,CS_1_Pin, GPIO_PIN_RESET);
 	  HAL_GPIO_WritePin(DIR_GPIO_Port,DIR_Pin,GPIO_PIN_SET);
 	  HAL_GPIO_WritePin(STEP_GPIO_Port,STEP_Pin,GPIO_PIN_RESET);
 	  HAL_GPIO_WritePin(EN_GPIO_Port, EN_Pin, GPIO_PIN_SET); // disable driver on startup, pin_set for disable
+	 */
 }
 
 
 void tmc_io_step_millis(uint32_t millis)
 {
+	/*
 	  HAL_GPIO_WritePin(STEP_GPIO_Port,STEP_Pin,GPIO_PIN_SET);
 	  HAL_Delay(millis);
 	  HAL_GPIO_WritePin(STEP_GPIO_Port,STEP_Pin,GPIO_PIN_RESET);
 	  HAL_Delay(millis);
+	  */
 }
 
 
 void tmc_io_step(uint32_t usec)
 {
+	/*
 	  HAL_GPIO_WritePin(STEP_GPIO_Port,STEP_Pin,GPIO_PIN_SET);
       timer2_wait_usec(usec);
 	  HAL_GPIO_WritePin(STEP_GPIO_Port,STEP_Pin,GPIO_PIN_RESET);
       timer2_wait_usec(usec);
+      */
 }
 
 uint32_t set_chopconf(uint8_t toff, uint8_t hstrt, uint8_t hend, uint8_t tbl, uint8_t vsense, uint8_t sync, uint8_t mres)
@@ -346,11 +473,11 @@ void const_speed(uint32_t step, uint32_t repeat)
 
 void ramp_stepper(uint32_t max_speed, uint32_t repeat)
 {
-	HAL_GPIO_WritePin(EN_GPIO_Port, EN_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(EN_GPIO_PORT, EN_PIN, GPIO_PIN_RESET);
 	accelerate(200, max_speed);
 	const_speed(max_speed, 10);
 	decelerate(max_speed, 200);
-	HAL_GPIO_WritePin(EN_GPIO_Port, EN_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(EN_GPIO_PORT, EN_PIN, GPIO_PIN_SET);
 }
 /* USER CODE END 1 */
 

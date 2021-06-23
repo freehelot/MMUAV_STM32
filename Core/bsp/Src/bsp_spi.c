@@ -62,4 +62,19 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* spiHandle)
 
 }
 
+void bsp_spi_tmc2130_send(uint8_t cmd, uint32_t data)
+{
+	// Variable, 5x8bits=40bits for communication via SPI
+	uint8_t spi[5]={0};
+	// First byte is command (write/read + register)
+	spi[0]=cmd;
+	// Other bytes set
+	spi[1]=((data>>24)&0xFF);
+	spi[2]=((data>>16)&0xFF);
+	spi[3]=((data>>8)&0xFF);
+	spi[4]=((data>>0)&0xFF);
+	//Transmit via SPI
+	HAL_SPI_Transmit(&hspi1,spi,5,50);
+}
+
 
