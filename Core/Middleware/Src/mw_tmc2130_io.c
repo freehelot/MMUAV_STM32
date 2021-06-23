@@ -282,14 +282,17 @@ void tmc_io_gpio(void)
 }
 
 
-void mw_tmc2130_io_step(uint8_t axis, uint32_t usec)
+void mw_tmc2130_io_step(uint8_t axis, bool dir, uint32_t usec)
 {
+	bsp_gpio_step_dir(axis, dir);
 	bsp_gpio_step_axis_on(axis);
 	bsp_tim_wait_usec(usec);
 	bsp_gpio_step_axis_off(axis);
 	bsp_tim_wait_usec(usec);
 
 }
+
+
 
 void tmc_io_step_millis(uint32_t millis)
 {

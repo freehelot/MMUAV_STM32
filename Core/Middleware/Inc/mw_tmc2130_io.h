@@ -130,9 +130,10 @@ void mw_tmc2130_io_config_all(uint8_t mode);
  * @brief Function for doing step on axis in usecs
  *
  * @param axis Desired axis of movement
+ * @param dir  Desired direction of movement
  * @param usec Step time in microseconds
  */
-void mw_tmc2130_io_step(uint8_t axis, uint32_t usec);
+void mw_tmc2130_io_step(uint8_t axis, bool dir, uint32_t usec);
 
 
 

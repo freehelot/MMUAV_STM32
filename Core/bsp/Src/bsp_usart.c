@@ -85,6 +85,33 @@ void bsp_usart_irq_handler( UART_HandleTypeDef *huart)
 	}
 }
 
+void bsp_usart_send_char(uint8_t c)
+{
+	HAL_UART_Transmit(&huart2, &c, sizeof(c), 10);
+}
+
+int bsp_usart_dequeue(char* c)
+{
+	int ret;
+	ret = 0;
+	*c = 0;
+	HAL_NVIC_DisableIRQ(USART2_IRQn);
+
+	if(RX_BUFFER_HEAD != RX_BUFFER_TAIL)
+	{
+		*c = RX_BUFFER[RX_BUFFER_TAIL];
+		RX_BUFFER_TAIL++;
+
+		if(RX_BUFFER_TAIL == BUFSIZE)
+		{
+			RX_BUFFER_TAIL = 0;
+		}
+		ret = 1;
+	}
+	HAL_NVIC_EnableIRQ(USART2_IRQn);
+	return ret;
+}
+
 // Private functions
 
 

@@ -140,11 +140,26 @@ void bsp_gpio_chipselect_all(void);
 void bsp_gpio_tmc2130_enable(void);
 
 /**
+ * @brief Disable stepper drivers
+ *
+ */
+void bsp_gpio_tmc2130_disable(void);
+
+/**
  * @brief Enable Step pin for movement and steps
  *
  * @param axis Desired axis of movement
  */
 void bsp_gpio_step_axis_on(uint8_t axis);
+
+/**
+ * @brief Set direction pins for desired axis
+ *
+ * @param axis Desired axis
+ * @param dir  Desired direction
+ */
+void bsp_gpio_step_dir(uint8_t axis, bool dir);
+
 
 /**
  * @brief Disable Step pin for movement and steps
