@@ -12,5 +12,5 @@
 *.ld
 *.launch
 *.elf
-
-
+*.copy
+*.ld
