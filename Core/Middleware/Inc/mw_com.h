@@ -22,6 +22,7 @@ extern "C" {
 #include <stdbool.h>
 #include <stdint.h>
 #include "stm32f4xx_hal.h"
+#include <stdlib.h>
 
 #include <bsp_gpio.h>
 #include <bsp_usart.h>
@@ -40,7 +41,13 @@ extern "C" {
  * @param movement
  * @return
  */
-bool mw_com_command(bool dir, uint32_t movement);
+void mw_com_command(bool *dir, uint32_t *movement, bool *confirm);
+
+
+/**
+ *
+ */
+void mw_com_command_all(bool *dirx, bool *diry, uint32_t *movx, uint32_t *movy, bool *confirm);
 
 
 #ifdef __cplusplus

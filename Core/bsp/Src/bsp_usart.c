@@ -49,6 +49,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
 	 {
 		 // USART2 clock enabled
 		 __HAL_RCC_USART2_CLK_ENABLE();
+		 __HAL_RCC_GPIOA_CLK_ENABLE();
 		 // USART2 GPIO enable
 		 bsp_usart2_gpio_init();
 

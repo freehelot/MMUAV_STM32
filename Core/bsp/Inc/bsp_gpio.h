@@ -25,6 +25,15 @@ extern "C" {
 
 /* Public defines -----------------------------------------------------------*/
 
+//Axis defines
+#define X_AXIS   (1U)
+#define Y_AXIS   (2U)
+// Motor CS defines
+#define MOT_X_1  (1U)
+#define MOT_X_2  (2U)
+#define MOT_Y_1  (3U)
+#define MOT_Y_2  (4U)
+
 // Stepper driver defines
 // Chip select GPIO defines
 // X axis motors
@@ -167,6 +176,20 @@ void bsp_gpio_step_dir(uint8_t axis, bool dir);
  * @param axis Desired axis of movement
  */
 void bsp_gpio_step_axis_off(uint8_t axis);
+
+/**
+ *
+ */
+void bsp_gpio_led_toggle(uint8_t led);
+
+/**
+ *
+ */
+void bsp_gpio_bjt_on(void);
+/**
+ *
+ */
+void bsp_gpio_bjt_off(void);
 
 void tmc_init_gpio(void);
 void tmc_step(uint32_t micros, bool dir);

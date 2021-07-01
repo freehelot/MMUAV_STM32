@@ -19,7 +19,7 @@
 #include <bsp_gpio.h>
 #include <bsp_spi.h>
 #include <bsp_tim.h>
-
+#include <mw_fun.h>
 
 // TMC specific includes
 #include <TMC2130/TMC2130_Mask_Shift.h>
@@ -63,6 +63,15 @@ typedef enum
 	SPI_RESET = 3,
 	DEFAULT = 4
 }spi_status_t;
+
+//CS1 and CS2 are X axes motors
+#define X_MOT_1  (1U)
+#define X_MOT_2  (2U)
+#define X_AXIS   (1U)
+//CS3 and CS4 are X axes motors
+#define Y_MOT_1  (3U)
+#define Y_MOT_2  (4U)
+#define Y_AXIS   (2U)
 /* USER CODE END Private defines */
 
 
@@ -137,62 +146,23 @@ void mw_tmc2130_io_step(uint8_t axis, bool dir, uint32_t usec);
 
 
 
-
-
-////////////////////////////////////////////
 /**
- * Simple function to write to TMC2130 via SPI.
  *
- * @param cmd Register address
- * @param data Data to be written to register
  */
-void tmc_io_write( uint8_t cmd,uint32_t data);
+void mw_tmc2130_io_step_all(bool x, bool y, bool dir_x, bool dir_y, uint32_t usec);
 
-
-/**
- * Set all data to 0 in registers. Must do during reset.
- */
-void tmc_io_init(void);
 
 /**
  * Get status of registers on logic analyzer
  */
-void tmc_io_status(void);
-
-/**
- * Setting microsteps depending on mode chosen
- * Initial function for testing chopconf
- * @param mode Mode selection for microstep setting
- */
-void tmc_io_config(uint8_t mode);
-
-/**
- * Set inital state of GPIO pins CS_1, DIR, STEP and EN
- */
-void tmc_io_gpio(void);
-
-/**
- * Function for doing STEP for defined time in milliseconds
- * @param millis Time of delay in milliseconds
- */
-void tmc_io_step_millis(uint32_t millis);
+void mw_tmc2130_io_status(void);
 
 
 /**
- * Function for doing step for defined time in usecs
- * @param usec Time of delay in usec
+ *
  */
-void tmc_io_step(uint32_t usec);
+void mw_tmc2130_io_calib(uint8_t axis, uint32_t usec);
 
-/**
- * Enable TMC stepper driver
- */
-void tmc_enable(void);
-
-/**
- * Disable TMC stepper driver
- */
-void tmc_disable(void);
 /**
  * Chopconf configuration via input arguments for some register value
  */

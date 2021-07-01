@@ -24,6 +24,9 @@ extern "C" {
 #include <bsp.h>
 #include <mw_tmc2130_io.h>
 #include <mw_com.h>
+#include <bsp_usart.h>
+
+#include <mw_fun.h>
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -31,7 +34,6 @@ extern "C" {
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
-
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/

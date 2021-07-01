@@ -14,8 +14,7 @@
 #include <bsp_gpio.h>
 
 
-#define X_AXIS   (1U)
-#define Y_AXIS   (2U)
+
 /* Private function prototypes-------------------------------------------*/
 
 /**
@@ -69,7 +68,7 @@ void bsp_usart2_gpio_init(void)
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
     GPIO_InitStruct.Alternate = GPIO_AF7_USART2;
-    HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
 }
 
@@ -112,16 +111,16 @@ void bsp_gpio_chipselect(uint8_t cs)
 
 	switch (cs)
 		{
-		    case 1:
+		    case MOT_X_1:
 			    HAL_GPIO_WritePin(CS_1_GPIO_PORT,CS_1_PIN,GPIO_PIN_RESET);
 		    break;
-		    case 2:
+		    case MOT_X_2:
 			    HAL_GPIO_WritePin(CS_2_GPIO_PORT,CS_2_PIN,GPIO_PIN_RESET);
 		    break;
-		    case 3:
+		    case MOT_Y_1:
 			    HAL_GPIO_WritePin(CS_3_GPIO_PORT,CS_3_PIN,GPIO_PIN_RESET);
 		    break;
-		    case 4:
+		    case MOT_Y_2:
 			    HAL_GPIO_WritePin(CS_4_GPIO_PORT,CS_4_PIN,GPIO_PIN_RESET);
 		    break;
 		    default:
@@ -201,16 +200,50 @@ void bsp_gpio_step_dir(uint8_t axis, bool dir)
 	switch(axis)
 	{
 	   case X_AXIS:
-		   HAL_GPIO_WritePin(STEP_X_GPIO_PORT, STEP_X_PIN, direction);
+		   HAL_GPIO_WritePin(DIR_X_GPIO_PORT,DIR_X_PIN, direction);
 	   break;
 	   case Y_AXIS:
-		   HAL_GPIO_WritePin(STEP_Y_GPIO_PORT, STEP_Y_PIN, direction);
+		   HAL_GPIO_WritePin(DIR_Y_GPIO_PORT, DIR_Y_PIN, direction);
 	   break;
 	   default:
 	   	   // Wrong axis input
 	   break;
 	}
 
+}
+
+void bsp_gpio_led_toggle(uint8_t led)
+{
+/*
+#define LED1_PIN            GPIO_PIN_12
+#define LED1_GPIO_PORT      GPIOD
+#define LED2_PIN            GPIO_PIN_14
+#define LED2_GPIO_PORT      GPIOD
+*/
+	switch(led)
+	{
+		case 0:
+			HAL_GPIO_TogglePin(LED1_GPIO_PORT, LED1_PIN);
+		break;
+		case 1:
+			HAL_GPIO_TogglePin(LED2_GPIO_PORT, LED2_PIN);
+		break;
+		default:
+			// for every other input, turn off leds
+			HAL_GPIO_WritePin(GPIOD, LED1_PIN|LED2_PIN, GPIO_PIN_RESET);
+		break;
+	}
+
+}
+
+void bsp_gpio_bjt_on(void)
+{
+	HAL_GPIO_WritePin(BJT_GPIO_PORT, BJT_PIN, GPIO_PIN_RESET);
+}
+
+void bsp_gpio_bjt_off(void)
+{
+	HAL_GPIO_WritePin(BJT_GPIO_PORT, BJT_PIN, GPIO_PIN_SET);
 }
 /* Private functions-------------------------------------------*/
 

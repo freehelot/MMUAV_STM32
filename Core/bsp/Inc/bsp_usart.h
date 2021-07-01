@@ -33,7 +33,7 @@ extern "C" {
 /* Public defines ------------------------------------------------------------------*/
 
 // Size of FIFO buffer
-#define BUFSIZE    (16U)
+#define BUFSIZE    (32U)
 
 /* Public data types ------------------------------------------------------------------*/
 
@@ -65,7 +65,7 @@ void bsp_usart_init(void);
  *
  * @param single character
  */
-void bsp_usart_send(uint8_t c);
+void bsp_usart_send_char(uint8_t c);
 
 
 

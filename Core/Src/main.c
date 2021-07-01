@@ -31,8 +31,11 @@
 #include <stdbool.h>
 
 #include <stdlib.h>
-/* USER CODE END Includes */
+#include <stm32f4xx_hal_uart.h>
 
+#include <string.h>
+/* USER CODE END Includes */
+UART_HandleTypeDef huart2;
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
 
@@ -53,19 +56,25 @@
 #define DELAY_MS                  (10U)
 #define MODE_SELECT               (5U)
 /* USER CODE END PM */
+#define MAX_LENGTH				(162U) //mm
+#define MIDDLE_LENGTH           (81U)  // 0mm center of arm
+#define LED_RED					  (0U)
+#define LED_GREEN    			  (0U)
 
+#define USEC_STEP				(20U)
+#define USEC_NONE				(0U)
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
 uint8_t drv[5] = {0};
 uint8_t crv[5];
 uint8_t vrv[5];
-uint32_t timer2_Ticks_usec;
+//uint32_t timer2_Ticks_usec;
 uint32_t timer2_ticks_usec;
 //usart related PV
-char RX_BUFFER[BUFSIZE];
-int RX_BUFFER_HEAD, RX_BUFFER_TAIL;
-uint8_t rx_data;
+//char RX_BUFFER[BUFSIZE];
+//int RX_BUFFER_HEAD, RX_BUFFER_TAIL;
+//uint8_t rx_data;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -87,30 +96,43 @@ uint8_t rx_data;
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	timer2_Ticks_usec = 0;
+	timer2_ticks_usec = 0;
 
-	uint8_t size = 3;
-	uint8_t counter = 0;
-	char command[size];
-	char c;
-	bool check = false;
-	uint32_t movement = 0;
-	bool valid = true;
-	bool direction = true;
+	uint32_t pulses_x = 0;
+	uint32_t pulses_y = 0;
+	uint32_t pulses = 0;
+	bool dir_x = true;
+	bool dir_y = true;
+	uint32_t mov_x = 0;
+	uint32_t mov_y = 0;
+	bool check_x = false;
+	//bool check_y = false;
+	//char Message[] = "\n Confirmation received\r\n";
 
+	uint32_t pos_x = MIDDLE_LENGTH;
+	uint32_t pos_y = MIDDLE_LENGTH;
+
+	bool x_on = true;
+	bool y_on = true;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
+  //HAL_Delay(2000);
   /* Initialize all configured peripherals */
   bsp_init();
-
+  //bsp_gpio_led_toggle(0);
   mw_tmc2130_io_init();
+  //HAL_Delay(2000);
+  bsp_gpio_led_toggle(1);
   mw_tmc2130_io_config_all(MODE_SELECT);
+  mw_tmc2130_io_calib(X_AXIS, 300);
+  mw_tmc2130_io_calib(Y_AXIS, 300);
+  bsp_gpio_led_toggle(1);
   /* USER CODE BEGIN 2 */
-
+  //bsp_gpio_blink_led(3);
 
   //tmc_io_gpio();
   //tmc_io_init();//set all regs to zero
@@ -126,10 +148,14 @@ int main(void)
   /* USER CODE END 2 */
 
   /* Infinite loop */
+
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-
+	  //HAL_UART_Transmit(&huart2,(uint8_t *)Message, strlen(Message), 100);
+	  //HAL_Delay(500);
+	  //bsp_usart_send_char(c);
+	  //HAL_Delay(500);
 //    /* USER CODE END WHILE */
 //    /* USER CODE BEGIN 3 */
 //	  //timer2_wait_usec(5);
@@ -138,6 +164,76 @@ int main(void)
 //	  if(!check)
 //	  {
 //		  // Waits for command via uart
+		  //mw_com_command(&dir_x, &mov_x, &check_x);
+		  //mw_com_command(&dir_y, &mov_y, &check_y);
+	  	  mw_com_command_all(&dir_x, &dir_y, &mov_x, &mov_y, &check_x);
+		  bsp_gpio_led_toggle(1);
+
+
+		  mov_x = mw_fun_pos(mov_x, &dir_x, &pos_x);
+		  mov_y = mw_fun_pos(mov_y, &dir_y, &pos_y);
+	  	  //if(check_x && check_y)
+		  if(check_x )
+	  	  {
+	  		  x_on = true;
+	  		  y_on = true;
+	  		  //HAL_UART_Transmit(&huart2,(uint8_t *)Message, strlen(Message), 100);
+	  		  //pulses = (FULL_ANGLE * mov_x * PITCH_DIV * STEP_ANGLE_DIV) / (STEP_ANGLE * PITCH_DIAM);
+	  		  //pulses = ( mov_x  * STEP_ANGLE_DIV) / (STEP_ANGLE);
+	  		  //pulses = (2*2*mov_x * 641)/ 314 ;
+	  		  //pulses = (2*2*mov_x * 65)/ 30 ;
+	  		  pulses_x = mw_fun_pulses(mov_x);
+	  		  pulses_y = mw_fun_pulses(mov_y);
+	  		  if(pulses_x >= pulses_y)
+	  		  {
+	  			  pulses = pulses_x;
+	  		  }
+	  		  else
+	  		  {
+	  			  pulses = pulses_y;
+	  		  }
+	  		  for(uint32_t i = 0; i < pulses; i++)
+	  		  {
+	  			  if(i >= pulses_x)
+	  			  {
+	  				  x_on = 0;
+	  			  }
+	  			  if(i >= pulses_y)
+	  			  {
+	  				  y_on = 0;
+	  			  }
+	  			  mw_tmc2130_io_step_all(x_on, y_on, dir_x, dir_y, USEC_STEP);
+
+
+	  		  }
+	  		  //HAL_UART_Transmit(&huart2,(uint8_t *)Message, strlen(Message), 100);
+
+/*
+	  		  for(uint32_t i = 0; i<pulses; i++)
+	  				  {
+
+	  			  	  	  if(pulses_x < i)
+	  			  	  	  {
+		  					  mw_tmc2130_io_step(X_AXIS, dir_x, USEC_STEP);
+	  			  	  	  }
+	  			  	  	  else
+	  			  	  	  {
+
+	  			  	  	  }
+
+
+	  				  }*/
+	  		  //pulses = (2*2*mov_y * 65)/ 30 ;
+	  		  //pulses = mw_fun_pulses(mov_y);
+	  		  		 // for(uint32_t i = 0; i<pulses; i++)
+	  		  		  //{
+	  		  			//  mw_tmc2130_io_step(Y_AXIS, dir_y, 20);
+	  		  		 // }
+
+	  	  }
+	  	  bsp_gpio_led_toggle(1);
+	  	  check_x = 0;
+	  	  //check_y = false;
 //		  if(USART2_Dequeue(&c)!=0)
 //		  	  {
 //			  	  	  // Check first symbol

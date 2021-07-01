@@ -19,14 +19,9 @@
 #define MAX_STEP (2000U)
 #define MIN_STEP (100U)
 
-//CS1 and CS2 are X axes motors
-#define X_MOT_1  (1U)
-#define X_MOT_2  (2U)
-#define X_AXIS   (1U)
-//CS3 and CS4 are X axes motors
-#define Y_MOT_1  (3U)
-#define Y_MOT_2  (4U)
-#define Y_AXIS   (2U)
+#define CALIB_PULSE (900U)
+#define CENTER_MOV  (81U)
+#define USEC_MOV	(20U)
 /* Private typedef -----------------------------------------------------------*/
 
 // Microstepping mode
@@ -47,6 +42,8 @@ typedef enum
 /* Private user code ---------------------------------------------------------*/
 
 SPI_HandleTypeDef hspi1;
+
+
 
 
 // Reworked functions to remove all instances of hal_gpio or hal_spi calls and instead call bsp functions
@@ -91,17 +88,23 @@ void mw_tmc2130_io_write_axis(uint8_t axis, uint8_t cmd, uint32_t data)
 
 void mw_tmc2130_io_init(void)
 {
-	HAL_Delay(200);
+	// Power reset to drivers
+	bsp_gpio_bjt_off();
+	bsp_gpio_led_toggle(0);
+	HAL_Delay(1000);
+	bsp_gpio_bjt_on();
 	mw_tmc2130_io_write_all(REG_GCONF|TMC2130_WRITE, TMC_INIT_DATA);
 	mw_tmc2130_io_write_all(REG_GCONF|TMC2130_WRITE, TMC_INIT_DATA);
 	mw_tmc2130_io_write_all(REG_CHOPCONF|TMC2130_WRITE, TMC_INIT_DATA);
 	mw_tmc2130_io_write_all(REG_CHOPCONF|TMC2130_WRITE, TMC_INIT_DATA);
 	mw_tmc2130_io_write_all(REG_COOLCONF|TMC2130_WRITE, TMC_INIT_DATA);
 	mw_tmc2130_io_write_all(REG_IHOLD_IRUN|TMC2130_WRITE, TMC_INIT_DATA);
+	HAL_Delay(100);
 }
 
 void mw_tmc2130_io_config_all(uint8_t mode)
 {
+
 	// 32bit data for storing data for registers
 	uint32_t data;
 	switch(mode)
@@ -158,127 +161,26 @@ void mw_tmc2130_io_config_all(uint8_t mode)
 	mw_tmc2130_io_write_all(TMC2130_WRITE|REG_CHOPCONF, data);
 	//low EN for enabling of driver
 	bsp_gpio_tmc2130_enable();
+
+	HAL_Delay(100);
+
 }
 
 
 
 /*  ---------------------------------------------------------*/
 
-void tmc_io_write( uint8_t cmd,uint32_t data)
-{
-/*
-		// Variable, 5x8bits=40bits for communication via SPI
-		uint8_t spi[5]={0};
-		//CS pin low before sending
-		HAL_GPIO_WritePin(CS_1_GPIO_Port,CS_1_Pin,GPIO_PIN_RESET);
-		// First byte is command (write/read + register)
-		spi[0]=cmd;
-		// Other bytes set
-		spi[1]=((data>>24)&0xFF);
-		spi[2]=((data>>16)&0xFF);
-		spi[3]=((data>>8)&0xFF);
-		spi[4]=((data>>0)&0xFF);
-		//Transmit via SPI
-		HAL_SPI_Transmit(&hspi1,spi,5,50);
-		//CS pin high after sending - CS reset
-		HAL_GPIO_WritePin(CS_1_GPIO_Port,CS_1_Pin,GPIO_PIN_SET);
 
-*/
-
-}
-
-void tmc_io_init(void)
+void mw_tmc2130_io_status(void)
 {
 	/*
-	HAL_Delay(200);
-	tmc_io_write(REG_GCONF|TMC2130_WRITE, TMC_INIT_DATA);
-	tmc_io_write(REG_GCONF|TMC2130_WRITE, TMC_INIT_DATA);
-	tmc_io_write(REG_CHOPCONF|TMC2130_WRITE, TMC_INIT_DATA);
-	tmc_io_write(REG_CHOPCONF|TMC2130_WRITE, TMC_INIT_DATA);
-	tmc_io_write(REG_COOLCONF|TMC2130_WRITE, TMC_INIT_DATA);
-	tmc_io_write(REG_IHOLD_IRUN|TMC2130_WRITE, TMC_INIT_DATA);
-*/
-}
-
-void tmc_io_config(uint8_t mode)
-{
-	/*
-	// 32bit data for storing data for registers
-	uint32_t data;
-	switch(mode)
-	{
-		case mode_0:
-			//native 256 microsteps, MRES=0, TBL=1=24, TOFF=8
-			data=0x00008008UL;
-		break;
-		case mode_1:
-			//128 microsteps, MRES=0, TBL=1=24, TOFF=8
-			data=0x02008008UL;
-		break;
-		case mode_2:
-			// 64 microsteps, MRES=0, TBL=1=24, TOFF=8
-			data=0x03008008UL;
-		break;
-		case mode_3:
-			// 32 microsteps, MRES=0, TBL=1=24, TOFF=8
-			data=0x04008008UL;
-		break;
-		case mode_4:
-			// 16 microsteps, MRES=0, TBL=1=24, TOFF=8
-			data=0x05008008UL;
-		break;
-		case mode_5:
-			//  8 microsteps, MRES=0, TBL=1=24, TOFF=8
-			data=0x06008008UL;
-		break;
-		case mode_6:
-			//  4 microsteps, MRES=0, TBL=1=24, TOFF=8
-			data=0x07008008UL;
-		break;
-		case mode_7:
-			//  2 microsteps, MRES=0, TBL=1=24, TOFF=8
-			data=0x08008008UL;
-		break;
-		case mode_8:
-			//  1 microsteps, MRES=0, TBL=1=24, TOFF=8
-			data=0x00008008UL;
-		break;
-		default:
-			//native 256 microsteps, MRES=0, TBL=1=24, TOFF=8
-			data = 0x00008008UL;
-		break;
-	}
-	// Voltage on AIN is current reference
-	tmc_io_write(TMC2130_WRITE|REG_GCONF, 0x00000001UL);
-	// IHOLD=0x10, IRUN=0x10
-	//tmc_io_write(TMC2130_WRITE|REG_IHOLD_IRUN, 0x00001010UL);
-	tmc_io_write(TMC2130_WRITE|REG_IHOLD_IRUN,0x00001C12UL);
-	//write mode of operation to chopconf register
-	tmc_io_write(TMC2130_WRITE|REG_CHOPCONF, data);
-	//low EN for enabling of driver
-	HAL_GPIO_WritePin(EN_GPIO_Port, EN_Pin, GPIO_PIN_RESET);
-	*/
-}
-
-void tmc_io_status(void)
-{
 	tmc_io_write(TMC2130_READ|REG_GCONF, 0x00000000UL);
 	tmc_io_write(TMC2130_READ|REG_GCONF, 0x00000000UL);
 	tmc_io_write(TMC2130_READ|REG_IHOLD_IRUN, 0x00000000UL);
 	tmc_io_write(TMC2130_READ|REG_IHOLD_IRUN, 0x00000000UL);
 	tmc_io_write(TMC2130_READ|REG_CHOPCONF, 0x00000000UL);
 	tmc_io_write(TMC2130_READ|REG_CHOPCONF, 0x00000000UL);
-
-}
-
-void tmc_io_gpio(void)
-{
-	/*
-	  HAL_GPIO_WritePin(CS_1_GPIO_Port,CS_1_Pin, GPIO_PIN_RESET);
-	  HAL_GPIO_WritePin(DIR_GPIO_Port,DIR_Pin,GPIO_PIN_SET);
-	  HAL_GPIO_WritePin(STEP_GPIO_Port,STEP_Pin,GPIO_PIN_RESET);
-	  HAL_GPIO_WritePin(EN_GPIO_Port, EN_Pin, GPIO_PIN_SET); // disable driver on startup, pin_set for disable
-	 */
+*/
 }
 
 
@@ -292,28 +194,51 @@ void mw_tmc2130_io_step(uint8_t axis, bool dir, uint32_t usec)
 
 }
 
-
-
-void tmc_io_step_millis(uint32_t millis)
+void mw_tmc2130_io_step_all(bool x, bool y, bool dir_x, bool dir_y, uint32_t usec)
 {
-	/*
-	  HAL_GPIO_WritePin(STEP_GPIO_Port,STEP_Pin,GPIO_PIN_SET);
-	  HAL_Delay(millis);
-	  HAL_GPIO_WritePin(STEP_GPIO_Port,STEP_Pin,GPIO_PIN_RESET);
-	  HAL_Delay(millis);
-	  */
+	bsp_gpio_step_dir(X_AXIS, dir_x);
+	bsp_gpio_step_dir(Y_AXIS, dir_y);
+	if(x)
+	{
+		bsp_gpio_step_axis_on(X_AXIS);
+	}
+	if(y)
+	{
+		bsp_gpio_step_axis_on(Y_AXIS);
+	}
+	bsp_tim_wait_usec(usec);
+	if(x)
+	{
+		bsp_gpio_step_axis_off(X_AXIS);
+	}
+	if(y)
+	{
+		bsp_gpio_step_axis_off(Y_AXIS);
+	}
+	bsp_tim_wait_usec(usec);
+
+}
+// private functions
+
+
+void mw_tmc2130_io_calib(uint8_t axis, uint32_t usec)
+{
+	uint32_t pulses = CALIB_PULSE;
+	//mw_tmc2130_io_write_all(TMC2130_WRITE|REG_CHOPCONF, 0x05008008UL);
+	//bsp_gpio_tmc2130_enable();
+	for(uint32_t i=0; i<900; i++){
+		mw_tmc2130_io_step(axis, 1, usec);
+	}
+	pulses = mw_fun_pulses(CENTER_MOV);
+
+	for(uint32_t i=0; i<pulses; i++)
+		{
+			mw_tmc2130_io_step(axis, 0, USEC_MOV);
+		}
+
 }
 
 
-void tmc_io_step(uint32_t usec)
-{
-	/*
-	  HAL_GPIO_WritePin(STEP_GPIO_Port,STEP_Pin,GPIO_PIN_SET);
-      timer2_wait_usec(usec);
-	  HAL_GPIO_WritePin(STEP_GPIO_Port,STEP_Pin,GPIO_PIN_RESET);
-      timer2_wait_usec(usec);
-      */
-}
 
 
 ////////////////////////////////////////////////////////////////
@@ -473,7 +398,7 @@ void accelerate(uint32_t start, uint32_t end)
 {
 	for(uint32_t i = start; i > end; (i=i-20))
 	{
-		tmc_io_step(i);
+		//tmc_io_step(i);
 	}
 }
 
@@ -481,7 +406,7 @@ void decelerate(uint32_t start, uint32_t end)
 {
 	for(uint32_t i = start; i < end; (i=i+20))
 	{
-		tmc_io_step(i);
+		//tmc_io_step(i);
 	}
 }
 
@@ -489,7 +414,7 @@ void const_speed(uint32_t step, uint32_t repeat)
 {
 	for(uint32_t i = repeat; i>0;i--)
 	{
-		tmc_io_step(step);
+		//tmc_io_step(step);
 	}
 }
 
