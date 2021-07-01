@@ -9,8 +9,5 @@
 
 # Object files
 *.doxyfile
-*.ld
 *.launch
-*.elf
 *.copy
-*.ld
