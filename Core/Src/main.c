@@ -170,11 +170,13 @@ int main(void)
 		  bsp_gpio_led_toggle(1);
 
 
-		  mov_x = mw_fun_pos(mov_x, &dir_x, &pos_x);
-		  mov_y = mw_fun_pos(mov_y, &dir_y, &pos_y);
+		  //mov_x = mw_fun_pos(mov_x, &dir_x, &pos_x);
+		  //mov_y = mw_fun_pos(mov_y, &dir_y, &pos_y);
 	  	  //if(check_x && check_y)
 		  if(check_x )
 	  	  {
+			  mov_x = mw_fun_pos(mov_x, &dir_x, &pos_x);
+			  mov_y = mw_fun_pos(mov_y, &dir_y, &pos_y);
 	  		  x_on = true;
 	  		  y_on = true;
 	  		  //HAL_UART_Transmit(&huart2,(uint8_t *)Message, strlen(Message), 100);
@@ -232,7 +234,7 @@ int main(void)
 
 	  	  }
 	  	  bsp_gpio_led_toggle(1);
-	  	  check_x = 0;
+	  	  check_x = false;
 	  	  //check_y = false;
 //		  if(USART2_Dequeue(&c)!=0)
 //		  	  {

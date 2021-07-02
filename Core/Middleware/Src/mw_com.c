@@ -75,12 +75,28 @@ void mw_com_command_all(bool *dirx, bool *diry, uint32_t *movx, uint32_t *movy, 
 	uint8_t size_all = 5;
 	char command[size];
 	*confirm = false;
+	uint32_t temp_movx = *movx;
+	uint32_t temp_movy = *movy;
+	// Mssg
+	// 0 - start char
+	// 1 - dir x char
+	// 2,3 - mov x chars
+	// 4 - dir y char
+	// 5,6 - mov y chars
+	// 7 - end char
 	while(1)
 	{
 		if(bsp_usart_dequeue(&c)!=0)
 		{
+			// read char from usart
 			bsp_usart_send_char(c);
-			if(counter == 0)
+			// if first char and start char
+			if( (counter == 0) && (c = 'A'))
+			{
+				counter ++;
+			}
+			// dir x char
+			else if(counter == 1)
 			{
 				if(c == '-')
 				{
@@ -92,18 +108,21 @@ void mw_com_command_all(bool *dirx, bool *diry, uint32_t *movx, uint32_t *movy, 
 				}
 				counter++;
 			}
-			else if ((counter >0) && (counter <3))
+			//mov x chars counter 2,3
+			else if ((counter > 1) && (counter < 4))
 			{
-				command[counter-1] = c;
+				command[counter-2] = c;
+				//2->3, 3->4
 				counter++;
-				if(counter >(size))
+				if(counter >3)
 				{
 					*movx = (uint32_t)atoi(command);
 
 					//*confirm = true;
 				}
 			}
-			else if (counter == 3)
+			// dir y
+			else if (counter == 4)
 			{
 				if(c == '-')
 				{
@@ -115,21 +134,32 @@ void mw_com_command_all(bool *dirx, bool *diry, uint32_t *movx, uint32_t *movy, 
 				}
 				counter++;
 			}
-			else
+			else if ((counter > 4) && (counter < 7))
 			{
-				command[counter-(2+size)] = c;
+				// 5 - (size), 5-5=0, 6-5 = 0
+				command[counter-5] = c;
 				counter++;
-				if(counter >(size_all))
+				if(counter > 6 )
 				{
 					*movy = (uint32_t)atoi(command);
 
-					*confirm = true;
-					break;
 				}
 			}
-		}
+			else if( (counter == 7) && (c = 'B'))
+			{
+				*confirm = true;
+				break;
+			}
+			else if ( (counter == 7) && (c!= 'B'))
+			{
+				*confirm = false;
+				//*movx = 0;
+				*movx = temp_movx;
+				*movy = temp_movy;
+				break;
+			}
 
-
-		}
+		}// if something in usart com port
+	}// while end
 }
 

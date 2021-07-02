@@ -156,7 +156,7 @@ void mw_tmc2130_io_config_all(uint8_t mode)
 	mw_tmc2130_io_write_all(TMC2130_WRITE|REG_GCONF, 0x00000001UL);
 	// IHOLD=0x10, IRUN=0x10
 	//tmc_io_write(TMC2130_WRITE|REG_IHOLD_IRUN, 0x00001010UL);
-	mw_tmc2130_io_write_all(TMC2130_WRITE|REG_IHOLD_IRUN,0x00001C12UL);
+	mw_tmc2130_io_write_all(TMC2130_WRITE|REG_IHOLD_IRUN,0x00001E12UL);
 	//write mode of operation to chopconf register
 	mw_tmc2130_io_write_all(TMC2130_WRITE|REG_CHOPCONF, data);
 	//low EN for enabling of driver
