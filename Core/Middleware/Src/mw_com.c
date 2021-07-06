@@ -163,3 +163,5 @@ void mw_com_command_all(bool *dirx, bool *diry, uint32_t *movx, uint32_t *movy, 
 	}// while end
 }
 
+
+

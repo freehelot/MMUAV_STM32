@@ -133,13 +133,14 @@ int main(void)
   bsp_gpio_led_toggle(1);
 
   // CALIBRATION
-  mw_tmc2130_io_config_all(MODE_SELECT - 1);
-  mw_tmc2130_io_calib(X_AXIS, 300);
-  mw_tmc2130_io_calib(Y_AXIS, 300);
-
-  // MIcrostepping select
-  mw_tmc2130_io_init();
   mw_tmc2130_io_config_all(MODE_SELECT);
+  mw_tmc2130_io_calib(X_AXIS, 300);
+  //mw_tmc2130_io_calib(Y_AXIS, 300);
+  //mw_tmc2130_io_deinit();
+  HAL_Delay(1000);
+  // MIcrostepping select
+  //mw_tmc2130_io_init();
+  //mw_tmc2130_io_config_all(MODE_SELECT);
   bsp_gpio_led_toggle(1);
 
 

@@ -19,7 +19,7 @@
 #define MAX_STEP (2000U)
 #define MIN_STEP (100U)
 
-#define CALIB_PULSE (1200U)
+#define CALIB_PULSE (800U)
 #define CENTER_MOV  (81U)
 #define USEC_MOV	(20U)
 /* Private typedef -----------------------------------------------------------*/
@@ -89,17 +89,17 @@ void mw_tmc2130_io_write_axis(uint8_t axis, uint8_t cmd, uint32_t data)
 void mw_tmc2130_io_init(void)
 {
 	// Power reset to drivers
-	bsp_gpio_bjt_off();
+	//bsp_gpio_bjt_off();
 	bsp_gpio_led_toggle(0);
 	HAL_Delay(1000);
-	bsp_gpio_bjt_on();
+	//bsp_gpio_bjt_on();
 	mw_tmc2130_io_write_all(REG_GCONF|TMC2130_WRITE, TMC_INIT_DATA);
 	mw_tmc2130_io_write_all(REG_GCONF|TMC2130_WRITE, TMC_INIT_DATA);
 	mw_tmc2130_io_write_all(REG_CHOPCONF|TMC2130_WRITE, TMC_INIT_DATA);
 	mw_tmc2130_io_write_all(REG_CHOPCONF|TMC2130_WRITE, TMC_INIT_DATA);
 	mw_tmc2130_io_write_all(REG_COOLCONF|TMC2130_WRITE, TMC_INIT_DATA);
 	mw_tmc2130_io_write_all(REG_IHOLD_IRUN|TMC2130_WRITE, TMC_INIT_DATA);
-	HAL_Delay(50);
+	HAL_Delay(250);
 }
 
 void mw_tmc2130_io_deinit(void)
