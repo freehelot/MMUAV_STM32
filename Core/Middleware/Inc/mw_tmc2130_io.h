@@ -126,6 +126,12 @@ void mw_tmc2130_io_write_axis(uint8_t axis, uint8_t cmd, uint32_t data);
  */
 void mw_tmc2130_io_init(void);
 
+/**
+ * @brief Deinitializes all stepper drivers
+ *
+ */
+void mw_tmc2130_io_deinit(void);
+
 
 /**
  * @brief Setting microsteps depending on mode chosen

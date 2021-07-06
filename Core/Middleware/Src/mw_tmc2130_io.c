@@ -19,7 +19,7 @@
 #define MAX_STEP (2000U)
 #define MIN_STEP (100U)
 
-#define CALIB_PULSE (900U)
+#define CALIB_PULSE (1200U)
 #define CENTER_MOV  (81U)
 #define USEC_MOV	(20U)
 /* Private typedef -----------------------------------------------------------*/
@@ -99,7 +99,13 @@ void mw_tmc2130_io_init(void)
 	mw_tmc2130_io_write_all(REG_CHOPCONF|TMC2130_WRITE, TMC_INIT_DATA);
 	mw_tmc2130_io_write_all(REG_COOLCONF|TMC2130_WRITE, TMC_INIT_DATA);
 	mw_tmc2130_io_write_all(REG_IHOLD_IRUN|TMC2130_WRITE, TMC_INIT_DATA);
-	HAL_Delay(100);
+	HAL_Delay(50);
+}
+
+void mw_tmc2130_io_deinit(void)
+{
+	bsp_gpio_bjt_off();
+	bsp_gpio_tmc2130_disable();
 }
 
 void mw_tmc2130_io_config_all(uint8_t mode)
@@ -115,35 +121,35 @@ void mw_tmc2130_io_config_all(uint8_t mode)
 		break;
 		case mode_1:
 			//128 microsteps, MRES=0, TBL=1=24, TOFF=8
-			data=0x02008008UL;
+			data=0x01008008UL;
 		break;
 		case mode_2:
 			// 64 microsteps, MRES=0, TBL=1=24, TOFF=8
-			data=0x03008008UL;
+			data=0x02008008UL;
 		break;
 		case mode_3:
 			// 32 microsteps, MRES=0, TBL=1=24, TOFF=8
-			data=0x04008008UL;
+			data=0x03008008UL;
 		break;
 		case mode_4:
 			// 16 microsteps, MRES=0, TBL=1=24, TOFF=8
-			data=0x05008008UL;
+			data=0x04008008UL;
 		break;
 		case mode_5:
 			//  8 microsteps, MRES=0, TBL=1=24, TOFF=8
-			data=0x06008008UL;
+			data=0x05008008UL;
 		break;
 		case mode_6:
 			//  4 microsteps, MRES=0, TBL=1=24, TOFF=8
-			data=0x07008008UL;
+			data=0x06008008UL;
 		break;
 		case mode_7:
 			//  2 microsteps, MRES=0, TBL=1=24, TOFF=8
-			data=0x08008008UL;
+			data=0x07008008UL;
 		break;
 		case mode_8:
 			//  1 microsteps, MRES=0, TBL=1=24, TOFF=8
-			data=0x00008008UL;
+			data=0x08008008UL;
 		break;
 		default:
 			//native 256 microsteps, MRES=0, TBL=1=24, TOFF=8
@@ -156,7 +162,8 @@ void mw_tmc2130_io_config_all(uint8_t mode)
 	mw_tmc2130_io_write_all(TMC2130_WRITE|REG_GCONF, 0x00000001UL);
 	// IHOLD=0x10, IRUN=0x10
 	//tmc_io_write(TMC2130_WRITE|REG_IHOLD_IRUN, 0x00001010UL);
-	mw_tmc2130_io_write_all(TMC2130_WRITE|REG_IHOLD_IRUN,0x00001E12UL);
+	//mw_tmc2130_io_write_all(TMC2130_WRITE|REG_IHOLD_IRUN,0x00001E12UL);
+	mw_tmc2130_io_write_all(TMC2130_WRITE|REG_IHOLD_IRUN,0x00001C12UL);
 	//write mode of operation to chopconf register
 	mw_tmc2130_io_write_all(TMC2130_WRITE|REG_CHOPCONF, data);
 	//low EN for enabling of driver
@@ -226,10 +233,10 @@ void mw_tmc2130_io_calib(uint8_t axis, uint32_t usec)
 	uint32_t pulses = CALIB_PULSE;
 	//mw_tmc2130_io_write_all(TMC2130_WRITE|REG_CHOPCONF, 0x05008008UL);
 	//bsp_gpio_tmc2130_enable();
-	for(uint32_t i=0; i<900; i++){
+	for(uint32_t i=0; i<pulses; i++){
 		mw_tmc2130_io_step(axis, 1, usec);
 	}
-	pulses = mw_fun_pulses(CENTER_MOV);
+	pulses = mw_fun_pulses(2 * CENTER_MOV, 8);
 
 	for(uint32_t i=0; i<pulses; i++)
 		{

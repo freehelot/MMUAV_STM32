@@ -20,7 +20,7 @@
 /**
  *
  */
-uint32_t mw_fun_pulses(uint32_t movement);
+uint32_t mw_fun_pulses(uint32_t movement, uint32_t ms);
 
 /**
  *

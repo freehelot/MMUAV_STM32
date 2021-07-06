@@ -54,7 +54,7 @@ UART_HandleTypeDef huart2;
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
 #define DELAY_MS                  (10U)
-#define MODE_SELECT               (5U)
+#define MODE_SELECT               (6U)
 /* USER CODE END PM */
 #define MAX_LENGTH				(162U) //mm
 #define MIDDLE_LENGTH           (81U)  // 0mm center of arm
@@ -63,6 +63,9 @@ UART_HandleTypeDef huart2;
 
 #define USEC_STEP				(20U)
 #define USEC_NONE				(0U)
+
+#define TOOTH_COUNT				(25U)
+#define MICRO_STEP				(4U)
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
@@ -106,7 +109,6 @@ int main(void)
 	uint32_t mov_x = 0;
 	uint32_t mov_y = 0;
 	bool check_x = false;
-	//bool check_y = false;
 	//char Message[] = "\n Confirmation received\r\n";
 
 	uint32_t pos_x = MIDDLE_LENGTH;
@@ -114,38 +116,33 @@ int main(void)
 
 	bool x_on = true;
 	bool y_on = true;
-  /* USER CODE END 1 */
+
 
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
-  //HAL_Delay(2000);
+
+
+
   /* Initialize all configured peripherals */
   bsp_init();
-  //bsp_gpio_led_toggle(0);
+
   mw_tmc2130_io_init();
-  //HAL_Delay(2000);
+
   bsp_gpio_led_toggle(1);
-  mw_tmc2130_io_config_all(MODE_SELECT);
+
+  // CALIBRATION
+  mw_tmc2130_io_config_all(MODE_SELECT - 1);
   mw_tmc2130_io_calib(X_AXIS, 300);
   mw_tmc2130_io_calib(Y_AXIS, 300);
+
+  // MIcrostepping select
+  mw_tmc2130_io_init();
+  mw_tmc2130_io_config_all(MODE_SELECT);
   bsp_gpio_led_toggle(1);
-  /* USER CODE BEGIN 2 */
-  //bsp_gpio_blink_led(3);
 
-  //tmc_io_gpio();
-  //tmc_io_init();//set all regs to zero
-  //tmc_io_config(5);
 
-  //HAL_Delay(2000);
-  //tmc_get_status();
-  ///////////////////////////////////
-  //timer2 init
-  //timer2_Ticks_usec=0;
-  //init gpio for tmc, DIR, STEP, EN to high (EN = 1, disabled, EN = 0, enabled)
-
-  /* USER CODE END 2 */
 
   /* Infinite loop */
 
@@ -164,8 +161,6 @@ int main(void)
 //	  if(!check)
 //	  {
 //		  // Waits for command via uart
-		  //mw_com_command(&dir_x, &mov_x, &check_x);
-		  //mw_com_command(&dir_y, &mov_y, &check_y);
 	  	  mw_com_command_all(&dir_x, &dir_y, &mov_x, &mov_y, &check_x);
 		  bsp_gpio_led_toggle(1);
 
@@ -184,8 +179,8 @@ int main(void)
 	  		  //pulses = ( mov_x  * STEP_ANGLE_DIV) / (STEP_ANGLE);
 	  		  //pulses = (2*2*mov_x * 641)/ 314 ;
 	  		  //pulses = (2*2*mov_x * 65)/ 30 ;
-	  		  pulses_x = mw_fun_pulses(mov_x);
-	  		  pulses_y = mw_fun_pulses(mov_y);
+	  		  pulses_x = mw_fun_pulses(mov_x, 4);
+	  		  pulses_y = mw_fun_pulses(mov_y, 4);
 	  		  if(pulses_x >= pulses_y)
 	  		  {
 	  			  pulses = pulses_x;
