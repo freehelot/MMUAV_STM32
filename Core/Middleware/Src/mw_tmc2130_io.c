@@ -21,7 +21,7 @@
 
 #define CALIB_PULSE (800U)
 #define CENTER_MOV  (81U)
-#define USEC_MOV	(20U)
+#define USEC_MOV	(200U)
 /* Private typedef -----------------------------------------------------------*/
 
 // Microstepping mode
@@ -236,7 +236,11 @@ void mw_tmc2130_io_calib(uint8_t axis, uint32_t usec)
 	for(uint32_t i=0; i<pulses; i++){
 		mw_tmc2130_io_step(axis, 1, usec);
 	}
-	pulses = mw_fun_pulses(2 * CENTER_MOV, 8);
+
+
+	pulses = mw_fun_pulses( CENTER_MOV, 4);
+	// precison = 1 option
+	//pulses = mw_fun_pulses(2* CENTER_MOV, 8);
 
 	for(uint32_t i=0; i<pulses; i++)
 		{

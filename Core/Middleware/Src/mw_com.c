@@ -73,7 +73,8 @@ void mw_com_command_all(bool *dirx, bool *diry, uint32_t *movx, uint32_t *movy, 
 	uint16_t counter = 0;
 	uint8_t size = 2;
 	uint8_t size_all = 5;
-	char command[size];
+	char command[size+1];
+	command[2] = '\n';
 	*confirm = false;
 	uint32_t temp_movx = *movx;
 	uint32_t temp_movy = *movy;
@@ -89,11 +90,11 @@ void mw_com_command_all(bool *dirx, bool *diry, uint32_t *movx, uint32_t *movy, 
 		if(bsp_usart_dequeue(&c)!=0)
 		{
 			// read char from usart
-			bsp_usart_send_char(c);
+			//bsp_usart_send_char(c);
 			// if first char and start char
-			if( (counter == 0) && (c = 'A'))
+			if((c = 'A'))
 			{
-				counter ++;
+				counter = 1;
 			}
 			// dir x char
 			else if(counter == 1)
@@ -117,7 +118,6 @@ void mw_com_command_all(bool *dirx, bool *diry, uint32_t *movx, uint32_t *movy, 
 				if(counter >3)
 				{
 					*movx = (uint32_t)atoi(command);
-
 					//*confirm = true;
 				}
 			}
@@ -148,6 +148,10 @@ void mw_com_command_all(bool *dirx, bool *diry, uint32_t *movx, uint32_t *movy, 
 			else if( (counter == 7) && (c = 'B'))
 			{
 				*confirm = true;
+				if(*movx == 0)
+				{
+					*movx = 0;
+				}
 				break;
 			}
 			else if ( (counter == 7) && (c!= 'B'))

@@ -61,7 +61,8 @@ UART_HandleTypeDef huart2;
 #define LED_RED					  (0U)
 #define LED_GREEN    			  (0U)
 
-#define USEC_STEP				(20U)
+//#define USEC_STEP				(20U)
+#define USEC_STEP				(100U)
 #define USEC_NONE				(0U)
 
 #define TOOTH_COUNT				(25U)
@@ -109,6 +110,9 @@ int main(void)
 	uint32_t mov_x = 0;
 	uint32_t mov_y = 0;
 	bool check_x = false;
+
+	uint32_t mov_des_x = 0;
+	uint32_t mov_des_y = 0;
 	//char Message[] = "\n Confirmation received\r\n";
 
 	uint32_t pos_x = MIDDLE_LENGTH;
@@ -171,8 +175,17 @@ int main(void)
 	  	  //if(check_x && check_y)
 		  if(check_x )
 	  	  {
-			  mov_x = mw_fun_pos(mov_x, &dir_x, &pos_x);
-			  mov_y = mw_fun_pos(mov_y, &dir_y, &pos_y);
+			  mov_des_x = mw_fun_pos(mov_x, &dir_x, &pos_x);
+			  mov_des_y = mw_fun_pos(mov_y, &dir_y, &pos_y);
+			  if(pos_x == 0)
+			  {
+				  pos_x = 81;
+			  }
+			  if(dir_x == false)
+			  {
+				  pos_x = 81;
+			  }
+
 	  		  x_on = true;
 	  		  y_on = true;
 	  		  //HAL_UART_Transmit(&huart2,(uint8_t *)Message, strlen(Message), 100);
@@ -180,8 +193,8 @@ int main(void)
 	  		  //pulses = ( mov_x  * STEP_ANGLE_DIV) / (STEP_ANGLE);
 	  		  //pulses = (2*2*mov_x * 641)/ 314 ;
 	  		  //pulses = (2*2*mov_x * 65)/ 30 ;
-	  		  pulses_x = mw_fun_pulses(mov_x, 4);
-	  		  pulses_y = mw_fun_pulses(mov_y, 4);
+	  		  pulses_x = mw_fun_pulses(mov_des_x, 4);
+	  		  pulses_y = mw_fun_pulses(mov_des_y, 4);
 	  		  if(pulses_x >= pulses_y)
 	  		  {
 	  			  pulses = pulses_x;
@@ -227,7 +240,7 @@ int main(void)
 	  		  		  //{
 	  		  			//  mw_tmc2130_io_step(Y_AXIS, dir_y, 20);
 	  		  		 // }
-
+	  		check_x = false;
 	  	  }
 	  	  bsp_gpio_led_toggle(1);
 	  	  check_x = false;

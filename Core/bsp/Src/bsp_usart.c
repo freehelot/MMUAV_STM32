@@ -100,6 +100,7 @@ int bsp_usart_dequeue(char* c)
 
 	if(RX_BUFFER_HEAD != RX_BUFFER_TAIL)
 	{
+
 		*c = RX_BUFFER[RX_BUFFER_TAIL];
 		RX_BUFFER_TAIL++;
 

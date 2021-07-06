@@ -14,9 +14,9 @@
 #define HALF_RANGE  	(81U)
 #define MAX_RANGE		(80U)
 #define MODULE			(125U)	// 1.25mm
-#define PI				(314U)  // 3.14
+#define PI				(3U)  // 3.14
 #define FULL_ANGLE		(360U)  // 360 deg
-#define SCALING_POINT	(100000U) // Scale factor for removing float points
+#define SCALING_POINT	(1000U) // Scale factor for removing float points
 #define PRECISION		(1U)	//1 -> min movement precision, 0 -> per teeth movement precision
 #define SCALING_FULL 	(2U)	// scaling for full precision, 2*1.8 deg = 1mm lin movement
 #define TEETH_PRECISION (8U)
@@ -41,9 +41,19 @@ uint32_t mw_fun_pulses(uint32_t movement, uint32_t ms)
 	// pulse * 0.490625mm
 	if(PRECISION != 1)
 	{
+		// mov = 8mm
 		// pulse * 0.490625mm
-		mov =  movement / 4;
-		mov = mov * TEETH_PRECISION;
+		// mov = 8mm / 4 =2
+		//npr:
+		// mov = 3 -> mov =0
+		// mov = 15 -> mov = 3 * 4
+		mov = mov / 4; // gledamo samo 4mm pomake
+		mov = mov * 4;
+		//mov =  movement / 4;
+		// mov = 2 *8
+		//mov = mov * TEETH_PRECISION; //4mm pomak
+		//
+		//mov = mov *2;
 	}
 
 	pulses = (mov * FULL_ANGLE * SCALING_POINT) / (MODULE * PI * TEETH_COUNT * MIN_ANGLE);
@@ -69,16 +79,18 @@ uint32_t mw_fun_pos(uint32_t mov_c, bool *dir, uint32_t *pos_c)
 	dir_des = *dir;
 	uint32_t pos_des = 0;
 	uint32_t mov_des = 0;
+	uint32_t mov_temp = 0;
+	mov_temp = mov_c;
 	uint32_t pos_current = 0;
 	pos_current = *pos_c;
 	// saturation
-	if(mov_c > 78)
+	if(mov_temp > 81)
 	{
-		mov_des = 78;
+		mov_des = 81;
 	}
 	else
 	{
-		mov_des = mov_c;
+		mov_des = mov_temp;
 	}
 
 	// DIR decides direction, plus or minus
