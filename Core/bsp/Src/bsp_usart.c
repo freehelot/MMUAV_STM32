@@ -35,6 +35,8 @@ void bsp_usart_init(void)
 	  }
       // Enables UART interrupt
 	  __HAL_UART_ENABLE_IT(&huart2, UART_IT_RXNE);
+	  RX_BUFFER_HEAD = 0;
+	  RX_BUFFER_TAIL = 0;
 
 }
 
