@@ -72,10 +72,14 @@ void bsp_usart_irq_handler( UART_HandleTypeDef *huart)
 	static char rx_head;
 	static char rx_data;
 	if(huart->Instance == USART2)
-	{
+	{	// macro used to store the content of UART data register
+		// automaticly clears the  USART interrupt pending bit
+		// When a character is received it is placed into global received char queue
 		rx_data = __HAL_UART_FLUSH_DRREGISTER(huart);
 		//static char rx_head;
 		rx_head = RX_BUFFER_HEAD + 1;
+		// rest of the code checks if the newly received character will cause the buffer overrun
+		// and put it into the buffer only if there is space left
 		if(rx_head == BUFSIZE)
 		{
 			rx_head = 0;
@@ -90,6 +94,8 @@ void bsp_usart_irq_handler( UART_HandleTypeDef *huart)
 
 void bsp_usart_send_char(uint8_t c)
 {
+	// this is needed to transmit data in blocking mode, which means that UASRT1 interface
+	// is ready for a new transmission
 	HAL_UART_Transmit(&huart2, &c, sizeof(c), 10);
 }
 
@@ -99,17 +105,21 @@ int bsp_usart_dequeue(char* c)
 	ret = 0;
 	*c = 0;
 	HAL_NVIC_DisableIRQ(USART2_IRQn);
+	// check whether the buffer is not empty
 
 	if(RX_BUFFER_HEAD != RX_BUFFER_TAIL)
 	{
-
+		//iff not empty -> fetch oldest value to byref param (char *c)
 		*c = RX_BUFFER[RX_BUFFER_TAIL];
+		// adjust the value of the buffer tail
 		RX_BUFFER_TAIL++;
 
 		if(RX_BUFFER_TAIL == BUFSIZE)
 		{
 			RX_BUFFER_TAIL = 0;
 		}
+		// set ret flag to 1
+		// indicates that receiver buffer was not empty
 		ret = 1;
 	}
 	HAL_NVIC_EnableIRQ(USART2_IRQn);
