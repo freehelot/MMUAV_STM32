@@ -69,10 +69,12 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
  */
 void bsp_usart_irq_handler( UART_HandleTypeDef *huart)
 {
+	static char rx_head;
+	static char rx_data;
 	if(huart->Instance == USART2)
 	{
 		rx_data = __HAL_UART_FLUSH_DRREGISTER(huart);
-		static char rx_head;
+		//static char rx_head;
 		rx_head = RX_BUFFER_HEAD + 1;
 		if(rx_head == BUFSIZE)
 		{
