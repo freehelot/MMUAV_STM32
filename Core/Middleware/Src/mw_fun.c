@@ -119,3 +119,18 @@ uint32_t mw_fun_pos(uint32_t mov_c, bool *dir, uint32_t *pos_c)
 
 	return mov_des;
 }
+
+
+/**
+ * @brief Functions for doing a ramp-up, ramp-down
+ *
+ * @param steps Number of steps needed to complete the ramp
+ * @return true if completed, false if still moving
+ */
+bool mw_fun_ramp(uin32_t steps)
+{
+	bool ret = false;
+	return false;
+}
+
+
