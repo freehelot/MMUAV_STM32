@@ -30,6 +30,7 @@ extern "C" {
 #include "stm32f4xx_hal.h"
 
 #include <bsp_gpio.h>
+#include <bsp_queue32.h>
 /* Public defines ------------------------------------------------------------------*/
 
 // Size of FIFO buffer
